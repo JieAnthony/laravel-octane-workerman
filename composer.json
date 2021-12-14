@@ -1,0 +1,42 @@
+{
+    "name": "jie-anthony/laravel-octane-workerman",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Anthony",
+            "email": "407968526@qq.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-json": "*",
+        "ext-pcntl": "*",
+        "ext-posix": "*",
+        "laravel/octane": "^1.0",
+        "workerman/psr7": "^1.4",
+        "workerman/workerman": "^4.0"
+    },
+    "bin": [
+        "bin/workerman-server"
+    ],
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "JieAnthony\\LaravelOctaneWorkerman\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JieAnthony\\LaravelOctaneWorkerman\\LaravelOctaneWorkermanServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

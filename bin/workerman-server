@@ -1,0 +1,98 @@
+#!/usr/bin/env php
+<?php
+
+use Laravel\Octane\ApplicationFactory;
+use Laravel\Octane\RequestContext;
+use Laravel\Octane\Stream;
+use Laravel\Octane\Worker;
+use JieAnthony\LaravelOctaneWorkerman\Workerman\WorkermanClient;
+use Workerman\Connection\ConnectionInterface;
+use Workerman\Protocols\Http;
+use Workerman\Psr7\ServerRequest;
+use Workerman\Worker as WorkermanWorker;
+use Workerman\Connection\TcpConnection;
+
+ini_set('display_errors', 'on');
+error_reporting(E_ALL);
+
+$basePath = require $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
+
+$data = json_decode(file_get_contents($_SERVER['argv'][2]), true);
+
+define('MAX_REQUEST', (int)$data['state']['maxRequests']);
+
+WorkermanWorker::$onMasterReload = function () {
+    if (function_exists('opcache_get_status')) {
+        if ($status = opcache_get_status()) {
+            if (isset($status['scripts']) && $scripts = $status['scripts']) {
+                foreach (array_keys($scripts) as $file) {
+                    opcache_invalidate($file, true);
+                }
+            }
+        }
+    }
+};
+
+$config = $data['state']['octaneConfig']['workerman'];
+
+WorkermanWorker::$pidFile = $config['pid_file'];
+WorkermanWorker::$stdoutFile = $config['stdout_file'];
+WorkermanWorker::$logFile = $config['log_file'];
+TcpConnection::$defaultMaxPackageSize = $config['max_package_size'] ?? 10 * 1024 * 1024;
+
+$workerman = new WorkermanWorker("http://{$data['state']['host']}:{$data['state']['port']}", $config['context'] ?? []);
+$workerman->count = $config['count'] ?: cpu_count() * 2;
+$workerman->name = $config['name'];
+$workerman->user = $config['user'];
+$workerman->group = $config['group'];
+$workerman->reusePort = $config['reuse_port'];
+$workerman->transport = $config['transport'];
+
+$worker = null;
+$workermanClient = new WorkermanClient;
+
+Http::requestClass(ServerRequest::class);
+$workerman->onMessage = function (ConnectionInterface $connection, ServerRequest $psr7Request) use ($worker, $workermanClient, $basePath) {
+    static $request_count = 0;
+
+    $lastRequestTime = microtime(true);
+
+    try {
+        /** @var Worker $worker */
+        $worker = tap((new Worker(
+            new ApplicationFactory($basePath), $workermanClient
+        )))->boot();
+
+        $worker->onRequestHandled(function ($request, $response, $sandbox) use ($lastRequestTime) {
+            if (!$sandbox->environment('local', 'testing')) {
+                return;
+            }
+
+            Stream::request(
+                $request->getMethod(),
+                $request->fullUrl(),
+                $response->getStatusCode(),
+                (microtime(true) - $lastRequestTime) * 1000,
+            );
+        });
+
+    } catch (Throwable $e) {
+        $connection->send($e->getMessage());
+
+        exit(1);
+    }
+
+    [$request, $context] = $workermanClient->marshalRequest(new RequestContext([
+        'psr7Request' => $psr7Request,
+        'connection' => $connection,
+    ]));
+
+    $worker->handle($request, $context);
+
+    if (++$request_count >= MAX_REQUEST) {
+        WorkermanWorker::stopAll();
+    }
+};
+
+
+WorkermanWorker::runAll();
