@@ -1,4 +1,4 @@
-Laravel Octane workerman
+Laravel Octane Workerman
 ---
 
 ## Installing
@@ -25,4 +25,10 @@ $ composer require jie-anthony/laravel-octane-workerman:dev-master -vvv
     'log_file' => storage_path('logs/workerman.log'),
     'max_package_size' => 10 * 1024 * 1024,
 ]
+```
+
+### Start
+
+```shell
+php artisan octane:workerman --port=9502 --host=0.0.0.0
 ```
