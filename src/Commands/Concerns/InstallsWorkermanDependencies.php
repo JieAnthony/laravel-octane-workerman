@@ -7,7 +7,6 @@ use Symfony\Component\Process\Exception\ProcessSignaledException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
-use Workerman\Psr7\Response;
 use Workerman\Worker;
 
 trait InstallsWorkermanDependencies
@@ -19,17 +18,17 @@ trait InstallsWorkermanDependencies
      */
     protected function ensureWorkermanPackageIsInstalled()
     {
-        if (class_exists(Worker::class) && class_exists(Response::class)) {
+        if (class_exists(Worker::class)) {
             return true;
         }
 
-        if (!$this->confirm('Octane requires "workerman/workerman" and "workerman/psr7". Do you wish to install it as a dependency?')) {
-            $this->error('Octane requires "workerman/workerman" and and "workerman/psr7".');
+        if (!$this->confirm('Octane requires "workerman/workerman". Do you wish to install it as a dependency?')) {
+            $this->error('Octane requires "workerman/workerman"');
 
             return false;
         }
 
-        $command = $this->findComposer() . ' require workerman/workerman:^4.0 workerman/psr7:^1.4.4 --with-all-dependencies';
+        $command = $this->findComposer() . ' require workerman/workerman:^4.0 --with-all-dependencies';
 
         $process = Process::fromShellCommandline($command, null, null, null, null);
 

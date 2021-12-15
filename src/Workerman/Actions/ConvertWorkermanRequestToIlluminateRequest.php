@@ -18,8 +18,8 @@ class ConvertWorkermanRequestToIlluminateRequest
     public function __invoke($workermanRequest, string $phpSapi): Request
     {
         $serverVariables = $this->prepareServerVariables(
-            $workermanRequest->server ?? [],
-            $workermanRequest->header ?? [],
+            $_SERVER,
+            $workermanRequest->header() ?? [],
             $phpSapi
         );
 
