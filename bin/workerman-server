@@ -33,7 +33,9 @@ WorkermanWorker::$onMasterReload = function () {
     }
 };
 
-$config = $data['state']['octaneConfig']['workerman'];
+$publicPath = $data['state']['publicPath'];
+$octaneConfig = $data['state']['octaneConfig'];
+$config = $octaneConfig['workerman'];
 
 WorkermanWorker::$pidFile = $config['pid_file'];
 WorkermanWorker::$stdoutFile = $config['stdout_file'];
@@ -52,7 +54,13 @@ $worker = null;
 $workermanClient = new WorkermanClient;
 
 Http::requestClass(ServerRequest::class);
-$workerman->onMessage = function (ConnectionInterface $connection, ServerRequest $psr7Request) use ($worker, $workermanClient, $basePath) {
+$workerman->onMessage = function (ConnectionInterface $connection, ServerRequest $psr7Request) use (
+    $worker,
+    $workermanClient,
+    $basePath,
+    $publicPath,
+    $octaneConfig
+) {
     static $request_count = 0;
 
     $lastRequestTime = microtime(true);
@@ -85,6 +93,8 @@ $workerman->onMessage = function (ConnectionInterface $connection, ServerRequest
     [$request, $context] = $workermanClient->marshalRequest(new RequestContext([
         'psr7Request' => $psr7Request,
         'connection' => $connection,
+        'publicPath' => $publicPath,
+        'octaneConfig' => $octaneConfig,
     ]));
 
     $worker->handle($request, $context);

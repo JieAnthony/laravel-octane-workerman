@@ -77,6 +77,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
             'port' => $this->option('port'),
             'maxRequests' => $this->option('max-requests'),
             'octaneConfig' => config('octane'),
+            'publicPath' => public_path(),
+            'storagePath' => storage_path(),
         ]);
     }
 
