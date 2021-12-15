@@ -4,6 +4,7 @@ namespace JieAnthony\LaravelOctaneWorkerman\Workerman;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use JieAnthony\LaravelOctaneWorkerman\Workerman\Actions\ConvertWorkermanRequestToIlluminateRequest;
 use Laravel\Octane\Contracts\Client;
 use Laravel\Octane\Contracts\ServesStaticFiles;
 use Laravel\Octane\Contracts\StoppableClient;
@@ -14,8 +15,7 @@ use Laravel\Octane\OctaneResponse;
 use Laravel\Octane\RequestContext;
 use Throwable;
 use Workerman\Worker;
-use Workerman\Psr7\Response as WorkermanResponse;
-use Workerman\Protocols\Http\Response;
+use Workerman\Protocols\Http\Response as WorkermanResponse;
 
 class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
 {
@@ -30,7 +30,10 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
     public function marshalRequest(RequestContext $context): array
     {
         return [
-            $this->toHttpFoundationRequest($context->psr7Request),
+            (new ConvertWorkermanRequestToIlluminateRequest)(
+                $context->workermanRequest,
+                PHP_SAPI
+            ),
             $context,
         ];
     }
@@ -82,7 +85,7 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
         ];
 
         $workermanResponse->send(
-            (new Response(200, $headers))->withFile(realpath($publicPath . '/' . $request->path()))
+            (new WorkermanResponse(200, $headers))->withFile(realpath($publicPath . '/' . $request->path()))
         );
     }
 
@@ -98,13 +101,11 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
     {
         $response = $this->toPsr7Response($octaneResponse->response);
 
-        $context->connection->send(new WorkermanResponse(
-            $response->getStatusCode(),
-            $response->getHeaders(),
-            $response->getBody(),
-            $response->getProtocolVersion(),
-            $response->getReasonPhrase()
-        ));
+        $context->connection->send(
+            (new WorkermanResponse($response->getStatusCode(), $response->getHeaders(), $response->getBody()))
+                ->withProtocolVersion($response->getProtocolVersion())
+                ->withStatus($response->getStatusCode(), $response->getReasonPhrase())
+        );
     }
 
     /**

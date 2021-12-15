@@ -13,7 +13,6 @@
         "ext-pcntl": "*",
         "ext-posix": "*",
         "laravel/octane": "^1.0",
-        "workerman/psr7": "^1.4",
         "workerman/workerman": "^4.0"
     },
     "bin": [
