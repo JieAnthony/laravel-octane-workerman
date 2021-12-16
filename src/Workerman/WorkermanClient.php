@@ -2,24 +2,28 @@
 
 namespace JieAnthony\LaravelOctaneWorkerman\Workerman;
 
+use DateTime;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\Actions\ConvertWorkermanRequestToIlluminateRequest;
 use Laravel\Octane\Contracts\Client;
 use Laravel\Octane\Contracts\ServesStaticFiles;
 use Laravel\Octane\Contracts\StoppableClient;
-use Laravel\Octane\MarshalsPsr7RequestsAndResponses;
 use Laravel\Octane\MimeType;
 use Laravel\Octane\Octane;
 use Laravel\Octane\OctaneResponse;
 use Laravel\Octane\RequestContext;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 use Workerman\Worker;
 use Workerman\Protocols\Http\Response as WorkermanResponse;
 
 class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
 {
-    use MarshalsPsr7RequestsAndResponses;
+    const STATUS_CODE_REASONS = [
+        419 => 'Page Expired',
+    ];
 
     /**
      * Marshal the given request context into an Illuminate request.
@@ -77,17 +81,13 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
      */
     public function serveStaticFile(Request $request, RequestContext $context): void
     {
-        $workermanResponse = $context->connection;
-
         $publicPath = $context->publicPath;
 
         $headers = [
             'Content-Type' => MimeType::get(pathinfo($request->path(), PATHINFO_EXTENSION))
         ];
 
-        $workermanResponse->send(
-            (new WorkermanResponse(200, $headers))->withFile(realpath($publicPath . '/' . $request->path()))
-        );
+        $context->connection->send((new WorkermanResponse(200, $headers))->withFile(realpath($publicPath . '/' . $request->path())));
     }
 
 
@@ -100,14 +100,78 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
      */
     public function respond(RequestContext $context, OctaneResponse $octaneResponse): void
     {
-        $response = $this->toPsr7Response($octaneResponse->response);
+        $response = $octaneResponse->response;
 
-        $context->connection->send(
-            (new WorkermanResponse($response->getStatusCode(), $response->getHeaders(), $response->getBody()))
-                ->withProtocolVersion($response->getProtocolVersion())
-                ->withStatus($response->getStatusCode(), $response->getReasonPhrase())
-        );
+        $workermanResponse = new WorkermanResponse;
+
+        if (!$response->headers->has('Date')) {
+            $response->setDate(DateTime::createFromFormat('U', time()));
+        }
+
+        $headers = $response->headers->allPreserveCase();
+
+        if (isset($headers['Set-Cookie'])) {
+            unset($headers['Set-Cookie']);
+        }
+
+        foreach ($headers as $name => $values) {
+            foreach ($values as $value) {
+                $workermanResponse->header($name, $value);
+            }
+        }
+
+        if (!is_null($reason = $this->getReasonFromStatusCode($response->getStatusCode()))) {
+            $workermanResponse->withStatus($response->getStatusCode(), $reason);
+        } else {
+            $workermanResponse->withStatus($response->getStatusCode());
+        }
+
+        foreach ($response->headers->getCookies() as $cookie) {
+            $workermanResponse->cookie(
+                $cookie->getName(),
+                $cookie->getValue(),
+                $cookie->getMaxAge(),
+                $cookie->getPath(),
+                $cookie->getDomain(),
+                $cookie->isSecure(),
+                $cookie->isHttpOnly(),
+                $cookie->getSameSite()
+            );
+        }
+
+        if ($response instanceof BinaryFileResponse) {
+            $workermanResponse->withFile($response->getFile()->getPathname());
+        }
+
+        if ($octaneResponse->outputBuffer) {
+            $workermanResponse->withBody($octaneResponse->outputBuffer);
+        }
+
+        if ($response instanceof StreamedResponse) {
+            ob_start(function ($data) use ($workermanResponse) {
+                if (strlen($data) > 0) {
+                    $workermanResponse->withBody($data);
+                }
+
+                return '';
+            }, 1);
+
+            $response->sendContent();
+
+            ob_end_clean();
+
+            $context->connection->send($workermanResponse);
+
+            return;
+        }
+        $content = $response->getContent();
+
+        $workermanResponse->withProtocolVersion($response->getProtocolVersion());
+        $workermanResponse->withBody($content);
+
+        $context->connection->send($workermanResponse);
     }
+
 
     /**
      * Send an error message to the server.
@@ -186,5 +250,21 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
         }
 
         return false;
+    }
+
+
+    /**
+     * Get the HTTP reason clause for non-standard status codes.
+     *
+     * @param int $code
+     * @return string|null
+     */
+    protected function getReasonFromStatusCode(int $code): ?string
+    {
+        if (array_key_exists($code, self::STATUS_CODE_REASONS)) {
+            return self::STATUS_CODE_REASONS[$code];
+        }
+
+        return null;
     }
 }
