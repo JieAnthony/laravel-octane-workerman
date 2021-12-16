@@ -3,8 +3,8 @@
 
 use Laravel\Octane\ApplicationFactory;
 use Laravel\Octane\RequestContext;
-use Laravel\Octane\Stream;
 use Laravel\Octane\Worker;
+use JieAnthony\LaravelOctaneWorkerman\Stream;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\WorkermanClient;
 use Workerman\Connection\ConnectionInterface;
 use Workerman\Worker as WorkermanWorker;
