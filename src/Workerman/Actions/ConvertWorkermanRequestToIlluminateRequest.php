@@ -11,14 +11,30 @@ class ConvertWorkermanRequestToIlluminateRequest
     /**
      * Convert the given Swoole request into an Illuminate request.
      *
-     * @param  \Workerman\Protocols\Http\Request  $workermanRequest
-     * @param  string  $phpSapi
+     * @param \Workerman\Connection\TcpConnection $connection
+     * @param \Workerman\Protocols\Http\Request $workermanRequest
+     * @param string $phpSapi
      * @return \Illuminate\Http\Request
      */
-    public function __invoke($workermanRequest, string $phpSapi): Request
+    public function __invoke($connection, $workermanRequest, string $phpSapi): Request
     {
+        $customizeServer = [
+            'request_method' => $workermanRequest->method(),
+            'request_uri' => $workermanRequest->path(),
+            'path_info' => $workermanRequest->path(),
+            'request_time' => $_SERVER['REQUEST_TIME'],
+            'request_time_float' => $_SERVER['REQUEST_TIME_FLOAT'],
+            'server_protocol' => 'HTTP/' . $workermanRequest->protocolVersion(),
+            'server_port' => $connection->getLocalPort(),
+            'remote_port' => $connection->getRemotePort(),
+            'remote_addr' => $connection->getRemoteIp(),
+        ];
+        if ($queryString = $workermanRequest->queryString()) {
+            $customizeServer['query_string'] = $queryString;
+        }
+
         $serverVariables = $this->prepareServerVariables(
-            $_SERVER,
+            $customizeServer,
             $workermanRequest->header() ?? [],
             $phpSapi
         );
@@ -33,7 +49,7 @@ class ConvertWorkermanRequestToIlluminateRequest
             $workermanRequest->rawBody(),
         );
 
-        if (str_starts_with((string) $request->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded') &&
+        if (str_starts_with((string)$request->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded') &&
             in_array(strtoupper($request->server->get('REQUEST_METHOD', 'GET')), ['PUT', 'PATCH', 'DELETE'])) {
             parse_str($request->getContent(), $data);
 
@@ -46,9 +62,9 @@ class ConvertWorkermanRequestToIlluminateRequest
     /**
      * Parse the "server" variables and headers into a single array of $_SERVER variables.
      *
-     * @param  array  $server
-     * @param  array  $headers
-     * @param  string  $phpSapi
+     * @param array $server
+     * @param array $headers
+     * @param string $phpSapi
      * @return array
      */
     protected function prepareServerVariables(array $server, array $headers, string $phpSapi): array
@@ -67,7 +83,7 @@ class ConvertWorkermanRequestToIlluminateRequest
         if (isset($results['REQUEST_URI'], $results['QUERY_STRING']) &&
             strlen($results['QUERY_STRING']) > 0 &&
             strpos($results['REQUEST_URI'], '?') === false) {
-            $results['REQUEST_URI'] .= '?'.$results['QUERY_STRING'];
+            $results['REQUEST_URI'] .= '?' . $results['QUERY_STRING'];
         }
 
         return $phpSapi === 'cli-server'
@@ -78,7 +94,7 @@ class ConvertWorkermanRequestToIlluminateRequest
     /**
      * Format the given HTTP headers into properly formatted $_SERVER variables.
      *
-     * @param  array  $headers
+     * @param array $headers
      * @return array
      */
     protected function formatHttpHeadersIntoServerVariables(array $headers): array
@@ -88,8 +104,8 @@ class ConvertWorkermanRequestToIlluminateRequest
         foreach ($headers as $key => $value) {
             $key = strtoupper(str_replace('-', '_', $key));
 
-            if (! in_array($key, ['HTTPS', 'REMOTE_ADDR', 'SERVER_PORT'])) {
-                $key = 'HTTP_'.$key;
+            if (!in_array($key, ['HTTPS', 'REMOTE_ADDR', 'SERVER_PORT'])) {
+                $key = 'HTTP_' . $key;
             }
 
             $results[$key] = $value;
@@ -101,7 +117,7 @@ class ConvertWorkermanRequestToIlluminateRequest
     /**
      * Correct headers set incorrectly by built-in PHP development server.
      *
-     * @param  array  $headers
+     * @param array $headers
      * @return array
      */
     protected function correctHeadersSetIncorrectlyByPhpDevServer(array $headers): array

@@ -31,6 +31,7 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
     {
         return [
             (new ConvertWorkermanRequestToIlluminateRequest)(
+                $context->connection,
                 $context->workermanRequest,
                 PHP_SAPI
             ),
