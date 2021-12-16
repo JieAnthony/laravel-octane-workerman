@@ -50,17 +50,17 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
 
         $server = tap(
             new Process(
-            [
+                [
                 (new PhpExecutableFinder())->find(),
                 'workerman-server',
                 'start',
                 $serverStateFile->path()
             ],
-            realpath(__DIR__ . '/../../bin'),
-            ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1],
-            null,
-            null
-        )
+                realpath(__DIR__ . '/../../bin'),
+                ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1],
+                null,
+                null
+            )
         )->start();
 
         $serverStateFile->writeProcessId($server->getPid());
