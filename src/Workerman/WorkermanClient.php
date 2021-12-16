@@ -184,10 +184,13 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
      */
     public function error(Throwable $e, Application $app, Request $request, RequestContext $context): void
     {
-        $context->connection->send(Octane::formatExceptionForClient(
-            $e,
-            $app->make('config')->get('app.debug')
-        ));
+        $workermanResponse = new WorkermanResponse;
+        $workermanResponse->withStatus(500);
+        $workermanResponse->header('Status', '500 Internal Server Error');
+        $workermanResponse->header('Content-Type', 'text/plain');
+        $workermanResponse->withBody(Octane::formatExceptionForClient($e, $app->make('config')->get('app.debug')));
+
+        $context->connection->send($workermanResponse);
     }
 
     /**
