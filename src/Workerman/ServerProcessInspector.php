@@ -13,8 +13,7 @@ class ServerProcessInspector
         protected ServerStateFile       $serverStateFile,
         protected SymfonyProcessFactory $processFactory,
         protected PosixExtension        $posix
-    )
-    {
+    ) {
     }
 
     /**

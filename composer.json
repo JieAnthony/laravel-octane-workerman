@@ -15,6 +15,9 @@
         "laravel/octane": "^1.0",
         "workerman/workerman": "^4.0"
     },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.15"
+    },
     "bin": [
         "bin/workerman-server"
     ],
@@ -37,5 +40,9 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "scripts": {
+        "check-style": "vendor/bin/php-cs-fixer fix --using-cache=no --config=.php_cs --diff --dry-run --ansi",
+        "fix-style": "vendor/bin/php-cs-fixer fix --using-cache=no --config=.php_cs --ansi"
+    }
 }

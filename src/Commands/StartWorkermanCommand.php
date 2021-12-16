@@ -13,7 +13,8 @@ use Symfony\Component\Process\Process;
 
 class StartWorkermanCommand extends Command implements SignalableCommandInterface
 {
-    use Concerns\InstallsWorkermanDependencies, InteractsWithServers;
+    use Concerns\InstallsWorkermanDependencies;
+    use InteractsWithServers;
 
     /**
      * The command's signature.
@@ -47,16 +48,19 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
 
         $this->writeServerStateFile($serverStateFile);
 
-        $server = tap(new Process([
-                (new PhpExecutableFinder)->find(),
+        $server = tap(
+            new Process(
+            [
+                (new PhpExecutableFinder())->find(),
                 'workerman-server',
                 'start',
                 $serverStateFile->path()
             ],
-                realpath(__DIR__ . '/../../bin'),
-                ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1],
-                null,
-                null)
+            realpath(__DIR__ . '/../../bin'),
+            ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1],
+            null,
+            null
+        )
         )->start();
 
         $serverStateFile->writeProcessId($server->getPid());
@@ -95,7 +99,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
         Str::of($output)
             ->explode("\n")
             ->filter()
-            ->each(fn($o) => is_array($stream = json_decode($o, true))
+            ->each(
+                fn ($o) => is_array($stream = json_decode($o, true))
                 ? $this->handleStream($stream)
                 : $this->raw($o)
             );
@@ -103,7 +108,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
         Str::of($errorOutput)
             ->explode("\n")
             ->filter()
-            ->each(fn($e) => is_array($stream = json_decode($e, true))
+            ->each(
+                fn ($e) => is_array($stream = json_decode($e, true))
                 ? $this->handleStream($stream)
                 : $this->error($e)
             );

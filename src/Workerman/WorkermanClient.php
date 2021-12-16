@@ -21,7 +21,7 @@ use Workerman\Protocols\Http\Response as WorkermanResponse;
 
 class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
 {
-    const STATUS_CODE_REASONS = [
+    public const STATUS_CODE_REASONS = [
         419 => 'Page Expired',
     ];
 
@@ -34,7 +34,7 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
     public function marshalRequest(RequestContext $context): array
     {
         return [
-            (new ConvertWorkermanRequestToIlluminateRequest)(
+            (new ConvertWorkermanRequestToIlluminateRequest())(
                 $context->connection,
                 $context->workermanRequest,
                 PHP_SAPI
@@ -102,7 +102,7 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
     {
         $response = $octaneResponse->response;
 
-        $workermanResponse = new WorkermanResponse;
+        $workermanResponse = new WorkermanResponse();
 
         if (!$response->headers->has('Date')) {
             $response->setDate(DateTime::createFromFormat('U', time()));
@@ -184,7 +184,7 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
      */
     public function error(Throwable $e, Application $app, Request $request, RequestContext $context): void
     {
-        $workermanResponse = new WorkermanResponse;
+        $workermanResponse = new WorkermanResponse();
         $workermanResponse->withStatus(500);
         $workermanResponse->header('Status', '500 Internal Server Error');
         $workermanResponse->header('Content-Type', 'text/plain');
