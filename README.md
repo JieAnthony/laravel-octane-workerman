@@ -7,9 +7,13 @@ Laravel Octane Workerman
 $ composer require jie-anthony/laravel-octane-workerman:dev-master -vvv
 ```
 
-### Configuration
+## Configuration
 
-`octane.php`
+```shell
+php artisan vendor:publish --provider="Laravel\Octane\OctaneServiceProvider"
+```
+
+configuration write in `octane.php`
 
 ```php
 'workerman' => [
@@ -27,8 +31,26 @@ $ composer require jie-anthony/laravel-octane-workerman:dev-master -vvv
 ]
 ```
 
-### Start
+## Command parameter
+
+|  option   | default  |
+|  ----  | ----  |
+| host  | 0.0.0.0 |
+| port  | 8000 |
+| max-requests  | 10000 |
+| watch  |  |
+
+## Start
 
 ```shell
 php artisan octane:workerman --port=9502 --host=0.0.0.0
 ```
+
+### Thanks
+* [Workerman](https://github.com/walkor/Workerman)
+* [Laravel](https://github.com/laravel/laravel)
+* [Octane](https://github.com/laravel/octane)
+
+## License
+
+MIT
