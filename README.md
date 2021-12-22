@@ -33,20 +33,24 @@ configuration write in `octane.php`
 
 ## Command parameter
 
-|  option   | default  |
-|  ----  | ----  |
-| host  | 0.0.0.0 |
-| port  | 8000 |
-| max-requests  | 10000 |
-| watch  |  |
+| option                   | default |
+|--------------------------|---------|
+| host                     | 0.0.0.0 |
+| port                     | 8000    |
+| max-requests             | 10000   |
+| mode  | start   |
+| watch                    |         |
+
+model options : (start/daemon/stop)
 
 ## Start
 
 ```shell
-php artisan octane:workerman --port=9502 --host=0.0.0.0
+php artisan octane:workerman --port=9502 --host=0.0.0.0 --mode=start
 ```
 
 ### Thanks
+
 * [Workerman](https://github.com/walkor/Workerman)
 * [Laravel](https://github.com/laravel/laravel)
 * [Octane](https://github.com/laravel/octane)

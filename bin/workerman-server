@@ -20,6 +20,8 @@ $data = json_decode(file_get_contents($_SERVER['argv'][2]), true);
 
 define('MAX_REQUEST', (int)$data['state']['maxRequests']);
 
+date_default_timezone_set($data['state']['timezone']);
+
 WorkermanWorker::$onMasterReload = function () {
     if (function_exists('opcache_get_status')) {
         if ($status = opcache_get_status()) {
@@ -32,6 +34,7 @@ WorkermanWorker::$onMasterReload = function () {
     }
 };
 
+$daemon = $data['state']['daemon'];
 $publicPath = $data['state']['publicPath'];
 $octaneConfig = $data['state']['octaneConfig'];
 $config = $octaneConfig['workerman'];
@@ -39,9 +42,11 @@ $config = $octaneConfig['workerman'];
 WorkermanWorker::$pidFile = $config['pid_file'];
 WorkermanWorker::$stdoutFile = $config['stdout_file'];
 WorkermanWorker::$logFile = $config['log_file'];
+WorkermanWorker::$daemonize = $daemon;
 TcpConnection::$defaultMaxPackageSize = $config['max_package_size'] ?? 10 * 1024 * 1024;
 
 $workerman = new WorkermanWorker("http://{$data['state']['host']}:{$data['state']['port']}", $config['context'] ?? []);
+
 $workerman->count = $config['count'] ?: cpu_count() * 2;
 $workerman->name = $config['name'];
 $workerman->user = $config['user'];
@@ -57,7 +62,8 @@ $workerman->onMessage = function (ConnectionInterface $connection, Request $work
     $workermanClient,
     $basePath,
     $publicPath,
-    $octaneConfig
+    $octaneConfig,
+    $daemon
 ) {
     static $request_count = 0;
 
@@ -69,18 +75,21 @@ $workerman->onMessage = function (ConnectionInterface $connection, Request $work
             new ApplicationFactory($basePath), $workermanClient
         )))->boot();
 
-        $worker->onRequestHandled(function ($request, $response, $sandbox) use ($lastRequestTime) {
-            if (!$sandbox->environment('local', 'testing')) {
-                return;
-            }
+        if (!$daemon) {
+            $worker->onRequestHandled(function ($request, $response, $sandbox) use ($lastRequestTime) {
+                if (!$sandbox->environment('local', 'testing')) {
+                    return;
+                }
 
-            Stream::request(
-                $request->getMethod(),
-                $request->fullUrl(),
-                $response->getStatusCode(),
-                (microtime(true) - $lastRequestTime) * 1000,
-            );
-        });
+                Stream::request(
+                    $request->getMethod(),
+                    $request->fullUrl(),
+                    $response->getStatusCode(),
+                    (microtime(true) - $lastRequestTime) * 1000,
+                );
+            });
+        }
+
 
     } catch (Throwable $e) {
         $connection->send($e->getMessage());

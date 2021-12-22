@@ -25,6 +25,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
                     {--host=0.0.0.0 : The IP address the server should bind to}
                     {--port=8000 : The port the server should be available on}
                     {--max-requests=10000 : The number of requests to process before reloading the server}
+                    {--mode=start : Workerman server mode [start|daemon|stop]}
                     {--watch : Automatically reload the server when the application is modified}';
 
     /**
@@ -40,58 +41,93 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
             return 1;
         }
 
+        return match ($mode = $this->option('mode')) {
+            default => $this->error('Error workerman server mode'),
+            'start', 'daemon' => $this->serverStart($inspector, $serverStateFile, $mode == 'daemon'),
+            'stop' => $this->serverStop($serverStateFile)
+        };
+    }
+
+    protected function serverStart(ServerProcessInspector $inspector, ServerStateFile $serverStateFile, bool $daemon)
+    {
         if ($inspector->serverIsRunning()) {
             $this->error('Workerman server is already running.');
 
-            return 1;
+            return Command::FAILURE;
         }
 
-        $this->writeServerStateFile($serverStateFile);
+        $this->writeServerStateFile($serverStateFile, $daemon);
 
-        $server = tap(
-            new Process(
-                [
+        $server = new Process(
+            [
                 (new PhpExecutableFinder())->find(),
                 'workerman-server',
                 'start',
                 $serverStateFile->path()
             ],
+            realpath(__DIR__ . '/../../bin'),
+            ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1],
+            null,
+            null
+        );
+
+        if ($daemon) {
+            $server->run();
+
+            $this->info('The workerman daemon started successfully');
+
+            return Command::SUCCESS;
+        } else {
+            $server->start();
+
+            $serverStateFile->writeProcessId($server->getPid());
+
+            return $this->runServer($server, $inspector, 'workerman');
+        }
+    }
+
+    protected function serverStop(ServerStateFile $serverStateFile)
+    {
+        if (!file_exists($serverStateFile->path())) {
+            $this->writeServerStateFile($serverStateFile, true);
+        }
+
+        tap(
+            new Process(
+                [
+                    (new PhpExecutableFinder())->find(),
+                    'workerman-server',
+                    'stop',
+                    $serverStateFile->path()
+                ],
                 realpath(__DIR__ . '/../../bin'),
                 ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1],
                 null,
                 null
             )
-        )->start();
+        )->run();
 
-        $serverStateFile->writeProcessId($server->getPid());
+        $serverStateFile->delete();
 
-        return $this->runServer($server, $inspector, 'workerman');
+        $this->info('The workerman server stopped successfully');
+
+        return Command::SUCCESS;
     }
 
-    /**
-     * Write the RoadRunner server state file.
-     *
-     * @param \Laravel\Octane\RoadRunner\ServerStateFile $serverStateFile
-     * @return void
-     */
-    protected function writeServerStateFile(ServerStateFile $serverStateFile)
+    protected function writeServerStateFile(ServerStateFile $serverStateFile, bool $daemon = false)
     {
         $serverStateFile->writeState([
             'host' => $this->option('host'),
             'port' => $this->option('port'),
+            'daemon' => $daemon,
             'maxRequests' => $this->option('max-requests'),
             'octaneConfig' => config('octane'),
             'publicPath' => public_path(),
             'storagePath' => storage_path(),
+            'timezone' => config('app.timezone')
         ]);
     }
 
-    /**
-     * Write the server process output to the console.
-     *
-     * @param \Symfony\Component\Process\Process $server
-     * @return void
-     */
     protected function writeServerOutput($server)
     {
         [$output, $errorOutput] = $this->getServerOutput($server);
@@ -101,8 +137,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
             ->filter()
             ->each(
                 fn ($o) => is_array($stream = json_decode($o, true))
-                ? $this->handleStream($stream)
-                : $this->raw($o)
+                    ? $this->handleStream($stream)
+                    : $this->raw($o)
             );
 
         Str::of($errorOutput)
@@ -110,18 +146,14 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
             ->filter()
             ->each(
                 fn ($e) => is_array($stream = json_decode($e, true))
-                ? $this->handleStream($stream)
-                : $this->error($e)
+                    ? $this->handleStream($stream)
+                    : $this->error($e)
             );
     }
 
-    /**
-     * Stop the server.
-     *
-     * @return int
-     */
     protected function stopServer()
     {
+        /** @var ServerProcessInspector $inspector */
         $inspector = app(ServerProcessInspector::class);
 
         if (!$inspector->serverIsRunning()) {

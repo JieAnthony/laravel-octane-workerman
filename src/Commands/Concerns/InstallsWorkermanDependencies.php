@@ -22,6 +22,18 @@ trait InstallsWorkermanDependencies
             return true;
         }
 
+        if (!extension_loaded('pcntl')) {
+            $this->error("Please install pcntl extension. See http://doc3.workerman.net/appendices/install-extension.html\n");
+
+            return false;
+        }
+
+        if (!extension_loaded('posix')) {
+            $this->error("Please install posix extension. See http://doc3.workerman.net/appendices/install-extension.html\n");
+
+            return false;
+        }
+
         if (!$this->confirm('Octane requires "workerman/workerman". Do you wish to install it as a dependency?')) {
             $this->error('Octane requires "workerman/workerman"');
 

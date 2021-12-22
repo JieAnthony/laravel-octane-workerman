@@ -2,7 +2,6 @@
 
 namespace JieAnthony\LaravelOctaneWorkerman\Workerman;
 
-use Laravel\Octane\PosixExtension;
 use Laravel\Octane\SymfonyProcessFactory;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Workerman\Worker;
@@ -11,8 +10,7 @@ class ServerProcessInspector
 {
     public function __construct(
         protected ServerStateFile       $serverStateFile,
-        protected SymfonyProcessFactory $processFactory,
-        protected PosixExtension        $posix
+        protected SymfonyProcessFactory $processFactory
     ) {
     }
 
@@ -23,15 +21,13 @@ class ServerProcessInspector
      */
     public function serverIsRunning(): bool
     {
-        [
-            'masterProcessId' => $masterProcessId,
-        ] = $this->serverStateFile->read();
+        ['masterProcessId' => $masterProcessId] = $this->serverStateFile->read();
 
-        return $masterProcessId && $this->posix->kill($masterProcessId, 0);
+        return (bool)$masterProcessId;
     }
 
     /**
-     * Reload the Workerman workers. TODO
+     * Reload the Workerman workers.
      *
      * @return void
      */
