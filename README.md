@@ -41,7 +41,7 @@ configuration write in `octane.php`
 | mode  | start   |
 | watch                    |         |
 
-model options : (start/daemon/stop)
+mode options : (start/daemon/stop)
 
 ## Start
 
