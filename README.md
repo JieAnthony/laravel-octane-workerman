@@ -4,7 +4,7 @@ Laravel Octane Workerman
 ## Installing
 
 ```shell
-$ composer require jie-anthony/laravel-octane-workerman:dev-master -vvv
+$ composer require jie-anthony/laravel-octane-workerman::^1.0 -vvv
 ```
 
 ## Configuration
