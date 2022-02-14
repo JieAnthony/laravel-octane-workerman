@@ -4,7 +4,7 @@ Laravel Octane Workerman
 ## Installing
 
 ```shell
-$ composer require jie-anthony/laravel-octane-workerman::^1.0 -vvv
+$ composer require "jie-anthony/laravel-octane-workerman:^1.0" -vvv
 ```
 
 ## Configuration
@@ -24,7 +24,7 @@ configuration write in `octane.php`
     'user' => '',
     'group' => '',
     'reuse_port' => true,
-    'pid_file' => storage_path('logs/webman.pid'),
+    'pid_file' => storage_path('logs/laravel-octane-workerman.pid'),
     'stdout_file' => storage_path('logs/stdout.log'),
     'log_file' => storage_path('logs/workerman.log'),
     'max_package_size' => 10 * 1024 * 1024,
