@@ -4,7 +4,6 @@
 use Laravel\Octane\ApplicationFactory;
 use Laravel\Octane\RequestContext;
 use Laravel\Octane\Worker;
-use JieAnthony\LaravelOctaneWorkerman\Stream;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\WorkermanClient;
 use Workerman\Connection\ConnectionInterface;
 use Workerman\Worker as WorkermanWorker;
@@ -63,33 +62,14 @@ $workerman->onMessage = function (ConnectionInterface $connection, Request $work
     $basePath,
     $publicPath,
     $octaneConfig,
-    $daemon
 ) {
     static $request_count = 0;
-
-    $lastRequestTime = microtime(true);
 
     try {
         /** @var Worker $worker */
         $worker = tap((new Worker(
             new ApplicationFactory($basePath), $workermanClient
         )))->boot();
-
-        if (!$daemon) {
-            $worker->onRequestHandled(function ($request, $response, $sandbox) use ($lastRequestTime) {
-                if (!$sandbox->environment('local', 'testing')) {
-                    return;
-                }
-
-                Stream::request(
-                    $request->getMethod(),
-                    $request->fullUrl(),
-                    $response->getStatusCode(),
-                    (microtime(true) - $lastRequestTime) * 1000,
-                );
-            });
-        }
-
 
     } catch (Throwable $e) {
         $connection->send($e->getMessage());

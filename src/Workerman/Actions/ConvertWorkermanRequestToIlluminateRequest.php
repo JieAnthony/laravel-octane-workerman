@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 class ConvertWorkermanRequestToIlluminateRequest
 {
     /**
-     * Convert the given Swoole request into an Illuminate request.
+     * Convert the given Workerman request into an Illuminate request.
      *
      * @param \Workerman\Connection\TcpConnection $connection
      * @param \Workerman\Protocols\Http\Request $workermanRequest

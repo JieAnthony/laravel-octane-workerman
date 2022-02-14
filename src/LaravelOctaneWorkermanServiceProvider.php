@@ -6,7 +6,6 @@ use Illuminate\Support\ServiceProvider;
 use JieAnthony\LaravelOctaneWorkerman\Commands\StartWorkermanCommand;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\ServerProcessInspector as WorkermanServerProcessInspector;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\ServerStateFile as WorkermanServerStateFile;
-use Laravel\Octane\PosixExtension;
 use Laravel\Octane\SymfonyProcessFactory;
 
 class LaravelOctaneWorkermanServiceProvider extends ServiceProvider
@@ -17,7 +16,6 @@ class LaravelOctaneWorkermanServiceProvider extends ServiceProvider
             return new WorkermanServerProcessInspector(
                 $app->make(WorkermanServerStateFile::class),
                 new SymfonyProcessFactory(),
-                new PosixExtension(),
             );
         });
 

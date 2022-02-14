@@ -41,7 +41,7 @@ configuration write in `octane.php`
 | mode  | start   |
 | watch                    |         |
 
-mode options : (start/daemon/stop)
+mode options : ( start / daemon / stop )
 
 ## Start
 
@@ -49,11 +49,18 @@ mode options : (start/daemon/stop)
 php artisan octane:workerman --port=9502 --host=0.0.0.0 --mode=start
 ```
 
+## Documentation
+
+* [Workerman](https://www.workerman.net/doc/workerman/)
+
 ### Thanks
 
 * [Workerman](https://github.com/walkor/Workerman)
 * [Laravel](https://github.com/laravel/laravel)
 * [Octane](https://github.com/laravel/octane)
+
+### TODO
+* Support Workerman v5  
 
 ## License
 

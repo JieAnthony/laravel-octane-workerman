@@ -34,8 +34,8 @@ trait InstallsWorkermanDependencies
             return false;
         }
 
-        if (!$this->confirm('Octane requires "workerman/workerman". Do you wish to install it as a dependency?')) {
-            $this->error('Octane requires "workerman/workerman"');
+        if (!$this->confirm('laravel-octane-workerman requires "workerman/workerman". Do you wish to install it as a dependency?')) {
+            $this->error('laravel-octane-workerman requires "workerman/workerman"');
 
             return false;
         }

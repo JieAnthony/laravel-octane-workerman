@@ -164,6 +164,7 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
 
             return;
         }
+
         $content = $response->getContent();
 
         $workermanResponse->withProtocolVersion($response->getProtocolVersion());
