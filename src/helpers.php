@@ -1,19 +1,80 @@
 <?php
 
-/**
- * @return int
- */
-function cpu_count()
-{
-    // Windows does not support the number of processes setting.
-    if (\DIRECTORY_SEPARATOR === '\\') {
-        return 1;
+if (! function_exists('cpu_count')) {
+    /**
+     * @return int
+     */
+    function cpu_count() {
+        // Windows does not support the number of processes setting.
+        if (\DIRECTORY_SEPARATOR === '\\') {
+            return 1;
+        }
+        if (strtolower(PHP_OS) === 'darwin') {
+            $count = shell_exec('sysctl -n machdep.cpu.core_count');
+        } else {
+            $count = shell_exec('nproc');
+        }
+        $count = (int)$count > 0 ? (int)$count : 4;
+        return $count;
     }
-    if (strtolower(PHP_OS) === 'darwin') {
-        $count = shell_exec('sysctl -n machdep.cpu.core_count');
-    } else {
-        $count = shell_exec('nproc');
-    }
-    $count = (int)$count > 0 ? (int)$count : 4;
-    return $count;
 }
+
+if (! function_exists('worker_start')) {
+    function worker_start($process_name, $config) {
+
+    $worker = new \Workerman\Worker($config['listen'] ?? null, $config['context'] ?? []);
+
+    $property_map = [
+        'count',
+        'user',
+        'group',
+        'reloadable',
+        'reusePort',
+        'transport',
+        'protocol',
+    ];
+
+    $worker->name = $process_name;
+
+    foreach ($property_map as $property) {
+        if (isset($config[$property])) {
+            $worker->$property = $config[$property];
+        }
+    }
+
+    $worker->onWorkerStart = function ($worker) use ($config) {
+        require_once $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
+
+        foreach ($config['services'] ?? [] as $server) {
+            if (!class_exists($server['handler'])) {
+                echo "process error: class {$server['handler']} not exists\r\n";
+                continue;
+            }
+
+            $listen = new \Workerman\Worker($server['listen'] ?? null, $server['context'] ?? []);
+            if (isset($server['listen'])) {
+                echo "listen: {$server['listen']}\n";
+            }
+
+            $instance = \Illuminate\Container\Container::make($server['handler'], $server['constructor'] ?? []);
+
+            worker_bind($listen, $instance);
+
+            $listen->listen();
+        }
+
+        if (isset($config['handler'])) {
+            if (!class_exists($config['handler'])) {
+                echo "process error: class {$config['handler']} not exists\r\n";
+                return;
+            }
+
+            $instance = \Illuminate\Container\Container::make($config['handler'], $config['constructor'] ?? []);
+
+            worker_bind($worker, $instance);
+        }
+
+    };
+}
+}
+

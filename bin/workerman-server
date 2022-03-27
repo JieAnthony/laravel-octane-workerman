@@ -16,6 +16,7 @@ error_reporting(E_ALL);
 $basePath = require $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
 
 $data = json_decode(file_get_contents($_SERVER['argv'][2]), true);
+$plugins = json_decode(@file_get_contents($_SERVER['argv'][3], true)) ?? [];
 
 define('MAX_REQUEST', (int)$data['state']['maxRequests']);
 
@@ -91,5 +92,20 @@ $workerman->onMessage = function (ConnectionInterface $connection, Request $work
     }
 };
 
+// Windows does not support custom processes.
+if (\DIRECTORY_SEPARATOR === '/') {
+    $process = $config['process'] ?? [];
+    foreach ($process as $process_name => $config) {
+        worker_start($process_name, $config);
+    }
+
+    foreach ($plugins as $firm => $projects) {
+        foreach ($projects as $name => $project) {
+            foreach ($project['process'] ?? [] as $process_name => $config) {
+                worker_start("plugin.$firm.$name.$process_name", $config);
+            }
+        }
+    }
+}
 
 WorkermanWorker::runAll();

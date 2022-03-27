@@ -64,7 +64,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
                 (new PhpExecutableFinder())->find(),
                 'workerman-server',
                 'start',
-                $serverStateFile->path()
+                $serverStateFile->path(),
+                base_path()
             ],
             realpath(__DIR__ . '/../../bin'),
             ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1],
@@ -107,7 +108,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
                 [
                     (new PhpExecutableFinder())->find(),
                     'workerman-server', 'stop',
-                    $serverStateFile->path()
+                    $serverStateFile->path(),
+                    base_path()
                 ],
                 realpath(__DIR__ . '/../../bin'),
                 [
