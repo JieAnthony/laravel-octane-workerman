@@ -39,8 +39,10 @@ configuration write in `octane.php`
                     app_path(),
                     config_path(),
                     base_path() . '/process',
-                    base_path() . '/support',
+                    base_path() . '/database',
+                    base_path() . '/lang',
                     base_path() . '/resource',
+                    base_path() . '/routes',
                     base_path() . '/.env',
                 ],
                 // Files with these suffixes will be monitored
