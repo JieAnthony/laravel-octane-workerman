@@ -19,7 +19,41 @@ if (! function_exists('cpu_count')) {
     }
 }
 
+if (! function_exists('worker_bind')) {
+    /**
+     * @param $worker
+     * @param $class
+     */
+    function worker_bind($worker, $class) {
+        $callback_map = [
+            'onConnect',
+            'onMessage',
+            'onClose',
+            'onError',
+            'onBufferFull',
+            'onBufferDrain',
+            'onWorkerStop',
+            'onWebSocketConnect'
+        ];
+
+        foreach ($callback_map as $name) {
+            if (method_exists($class, $name)) {
+                $worker->$name = [$class, $name];
+            }
+        }
+
+        if (method_exists($class, 'onWorkerStart')) {
+            call_user_func([$class, 'onWorkerStart'], $worker);
+        }
+    }
+}
+
 if (! function_exists('worker_start')) {
+    /**
+     * @param $process_name
+     * @param $config
+     * @return void
+     */
     function worker_start($process_name, $config) {
 
     $worker = new \Workerman\Worker($config['listen'] ?? null, $config['context'] ?? []);
@@ -56,7 +90,7 @@ if (! function_exists('worker_start')) {
                 echo "listen: {$server['listen']}\n";
             }
 
-            $instance = \Illuminate\Container\Container::make($server['handler'], $server['constructor'] ?? []);
+            $instance = \Illuminate\Container\Container::getInstance()->make($server['handler'], $server['constructor'] ?? []);
 
             worker_bind($listen, $instance);
 
@@ -69,7 +103,7 @@ if (! function_exists('worker_start')) {
                 return;
             }
 
-            $instance = \Illuminate\Container\Container::make($config['handler'], $config['constructor'] ?? []);
+            $instance = \Illuminate\Container\Container::getInstance()->make($config['handler'], $config['constructor'] ?? []);
 
             worker_bind($worker, $instance);
         }
