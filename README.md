@@ -36,21 +36,24 @@ configuration write in `octane.php`
             'constructor' => [
                 // Monitor these directories
                 'monitor_dir' => [
-                    app_path(),
-                    config_path(),
-                    base_path() . '/process',
+                    base_path() . '/app',
+                    base_path() . '/bootstrap',
+                    base_path() . '/config',
                     base_path() . '/database',
-                    base_path() . '/lang',
-                    base_path() . '/resource',
+                    base_path() . '/public/**/*.php',
+                    base_path() . '/resources/**/*.php',
                     base_path() . '/routes',
+                    base_path() . '/composer.lock',
                     base_path() . '/.env',
+                    base_path() . '/lang',
+                    base_path() . '/process',
                 ],
                 // Files with these suffixes will be monitored
                 'monitor_extensions' => [
                     'php', 'html', 'htm', 'env'
                 ]
             ]
-        ]
+        ],
     ],
 ]
 ```
