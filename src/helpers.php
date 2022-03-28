@@ -1,5 +1,15 @@
 <?php
 
+if (!function_exists('webman_config')) {
+    /**
+     * @return int
+     */
+    function webman_config(string $key = null, $default = null)
+    {
+        return \JieAnthony\LaravelOctaneWorkerman\WebmanConfig::get($key, $default);
+    }
+}
+
 if (!function_exists('cpu_count')) {
     /**
      * @return int
@@ -60,15 +70,18 @@ if (!function_exists('worker_start')) {
     {
         $worker = new \Workerman\Worker($config['listen'] ?? null, $config['context'] ?? []);
 
+        $worker->app = (new \Laravel\Octane\ApplicationFactory($_SERVER['APP_BASE_PATH']))->createApplication();
+        \JieAnthony\LaravelOctaneWorkerman\WebmanConfig::load($worker->app->configPath());
+
         $property_map = [
-        'count',
-        'user',
-        'group',
-        'reloadable',
-        'reusePort',
-        'transport',
-        'protocol',
-    ];
+            'count',
+            'user',
+            'group',
+            'reloadable',
+            'reusePort',
+            'transport',
+            'protocol',
+        ];
 
         $worker->name = $process_name;
 

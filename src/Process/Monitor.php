@@ -19,8 +19,8 @@ use Workerman\Timer;
 use Workerman\Worker;
 
 /**
- * Class FileMonitor
- * @package App
+ * Class Monitor
+ * @package Process
  */
 class Monitor
 {

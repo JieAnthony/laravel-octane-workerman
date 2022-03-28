@@ -30,6 +30,10 @@ configuration write in `octane.php`
     'max_package_size' => 10 * 1024 * 1024,
 
     'process' => [
+        'database-heartbeat' => [
+            'handler' => JieAnthony\LaravelOctaneWorkerman\Process\DatabaseHeartbeat::class,
+            'reloadable' => false,
+        ],
         'monitor' => [
             'handler' => JieAnthony\LaravelOctaneWorkerman\Process\Monitor::class,
             'reloadable' => false,
