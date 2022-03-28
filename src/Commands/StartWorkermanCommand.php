@@ -25,7 +25,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
                     {--host=0.0.0.0 : The IP address the server should bind to}
                     {--port=8000 : The port the server should be available on}
                     {--max-requests=10000 : The number of requests to process before reloading the server}
-                    {--mode=start : Workerman server mode [ start | daemon | stop ]}
+                    {--mode=start : Workerman server mode [ start | daemon | reload | stop ]}
                     {--watch : Automatically reload the server when the application is modified}';
 
     /**
@@ -44,6 +44,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
         return match ($mode = $this->option('mode')) {
             default => $this->error('Error workerman server mode'),
             'start', 'daemon' => $this->serverStart($inspector, $serverStateFile, $mode == 'daemon'),
+            'reload' => $this->serverReload($inspector),
             'stop' => $this->serverStop($serverStateFile)
         };
     }
@@ -63,7 +64,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
                 (new PhpExecutableFinder())->find(),
                 'workerman-server',
                 'start',
-                $serverStateFile->path()
+                $serverStateFile->path(),
+                base_path()
             ],
             realpath(__DIR__ . '/../../bin'),
             ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1],
@@ -86,6 +88,15 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
         }
     }
 
+    protected function serverReload(ServerProcessInspector $inspector)
+    {
+        $inspector->reloadServer();
+
+        $this->info('The workerman server reload successfully');
+
+        return Command::SUCCESS;
+    }
+
     protected function serverStop(ServerStateFile $serverStateFile)
     {
         if (! file_exists($serverStateFile->path())) {
@@ -97,7 +108,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
                 [
                     (new PhpExecutableFinder())->find(),
                     'workerman-server', 'stop',
-                    $serverStateFile->path()
+                    $serverStateFile->path(),
+                    base_path()
                 ],
                 realpath(__DIR__ . '/../../bin'),
                 [
