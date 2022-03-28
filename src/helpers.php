@@ -60,15 +60,17 @@ if (!function_exists('worker_start')) {
     {
         $worker = new \Workerman\Worker($config['listen'] ?? null, $config['context'] ?? []);
 
+        $worker->app = (new \Laravel\Octane\ApplicationFactory($_SERVER['APP_BASE_PATH']))->createApplication();
+
         $property_map = [
-        'count',
-        'user',
-        'group',
-        'reloadable',
-        'reusePort',
-        'transport',
-        'protocol',
-    ];
+            'count',
+            'user',
+            'group',
+            'reloadable',
+            'reusePort',
+            'transport',
+            'protocol',
+        ];
 
         $worker->name = $process_name;
 
