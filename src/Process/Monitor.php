@@ -172,9 +172,9 @@ class Monitor
         $unit = $memory_limit[strlen($memory_limit) - 1];
         if ($unit == 'G') {
             $memory_limit = 1024 * (int)$memory_limit;
-        } else if ($unit == 'M') {
+        } elseif ($unit == 'M') {
             $memory_limit = (int)$memory_limit;
-        } else if ($unit == 'K') {
+        } elseif ($unit == 'K') {
             $memory_limit = (int)($memory_limit / 1024);
         } else {
             $memory_limit = (int)($memory_limit / (1024 * 1024));

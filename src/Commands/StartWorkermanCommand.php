@@ -37,7 +37,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
 
     public function handle(ServerProcessInspector $inspector, ServerStateFile $serverStateFile)
     {
-        if (! $this->ensureWorkermanPackageIsInstalled()) {
+        if (!$this->ensureWorkermanPackageIsInstalled()) {
             return 1;
         }
 
@@ -99,7 +99,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
 
     protected function serverStop(ServerStateFile $serverStateFile)
     {
-        if (! file_exists($serverStateFile->path())) {
+        if (!file_exists($serverStateFile->path())) {
             $this->writeServerStateFile($serverStateFile, true);
         }
 
@@ -117,7 +117,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
                     'LARAVEL_OCTANE' => 1
                 ],
                 null,
-                null)
+                null
+            )
         )->run();
 
         $serverStateFile->delete();
@@ -149,8 +150,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
             ->explode("\n")
             ->filter()
             ->each(
-                fn($o) => is_array($stream = json_decode($o, true))
-                    ?$this->handleStream($stream)
+                fn ($o) => is_array($stream = json_decode($o, true))
+                    ? $this->handleStream($stream)
                     : $this->raw($o)
             );
 
@@ -158,8 +159,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
             ->explode("\n")
             ->filter()
             ->each(
-                fn($e) => is_array($stream = json_decode($e, true))
-                    ?$this->handleStream($stream)
+                fn ($e) => is_array($stream = json_decode($e, true))
+                    ? $this->handleStream($stream)
                     : $this->error($e)
             );
     }
@@ -169,7 +170,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
         /** @var ServerProcessInspector $inspector */
         $inspector = app(ServerProcessInspector::class);
 
-        if (! $inspector->serverIsRunning()) {
+        if (!$inspector->serverIsRunning()) {
             app(ServerStateFile::class)->delete();
 
             $this->error('Workerman server is not running.');
