@@ -22,10 +22,10 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
      * @var string
      */
     public $signature = 'octane:workerman
+                    {mode=start : Workerman server mode [ start | daemon | reload | stop ]}
                     {--host=0.0.0.0 : The IP address the server should bind to}
                     {--port=8000 : The port the server should be available on}
                     {--max-requests=10000 : The number of requests to process before reloading the server}
-                    {--mode=start : Workerman server mode [ start | daemon | reload | stop ]}
                     {--watch : Automatically reload the server when the application is modified}';
 
     /**
@@ -41,7 +41,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
             return 1;
         }
 
-        return match ($mode = $this->option('mode')) {
+        return match ($mode = $this->argument('mode')) {
             default => $this->error('Error workerman server mode'),
             'start', 'daemon' => $this->serverStart($inspector, $serverStateFile, $mode == 'daemon'),
             'reload' => $this->serverReload($inspector),

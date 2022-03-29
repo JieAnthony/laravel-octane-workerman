@@ -77,7 +77,19 @@ mode options : ( start / daemon / stop )
 ## Start
 
 ```shell
-php artisan octane:workerman --port=9502 --host=0.0.0.0 --mode=start
+php artisan octane:workerman --port=9502 --host=0.0.0.0 start
+```
+
+## Stop
+
+```shell
+php artisan octane:workerman stop
+```
+
+## reload
+
+```shell
+php artisan octane:workerman reload
 ```
 
 ## Documentation
