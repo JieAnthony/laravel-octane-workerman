@@ -11,7 +11,7 @@ use Symfony\Component\Console\Command\SignalableCommandInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
-class StartWorkermanCommand extends Command implements SignalableCommandInterface
+class StartWorkermanHttpCommand extends Command implements SignalableCommandInterface
 {
     use Concerns\InstallsWorkermanDependencies;
     use InteractsWithServers;
@@ -23,8 +23,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
      */
     public $signature = 'workerman:http
                     {mode=start : Workerman server mode [ start | daemon | reload | stop ]}
-                    {--host=0.0.0.0 : The IP address the server should bind to}
-                    {--port=8000 : The port the server should be available on}
+                    {--host : The IP address the server should bind to}
+                    {--port : The port the server should be available on}
                     {--max-requests=10000 : The number of requests to process before reloading the server}
                     {--watch : Automatically reload the server when the application is modified}';
 
@@ -131,8 +131,8 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
     protected function writeServerStateFile(ServerStateFile $serverStateFile, bool $daemon = false)
     {
         $serverStateFile->writeState([
-            'host' => $this->option('host'),
-            'port' => $this->option('port'),
+            'host' => $this->option('host') ?: config('octane.gatewayworker.http.host'),
+            'port' => $this->option('port') ?: config('octane.gatewayworker.http.port'),
             'daemon' => $daemon,
             'maxRequests' => $this->option('max-requests'),
             'octaneConfig' => config('octane'),

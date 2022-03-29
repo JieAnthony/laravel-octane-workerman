@@ -31,10 +31,10 @@ class ServerProcessInspector
      *
      * @return void
      */
-    public function reloadServer(): void
+    public function reloadServer($server = 'workerman-server'): void
     {
         $this->processFactory->createProcess([
-            (new PhpExecutableFinder())->find(), 'workerman-server', 'reload', $this->serverStateFile->path(),
+            (new PhpExecutableFinder())->find(), $server, 'reload', $this->serverStateFile->path(),
         ], realpath(__DIR__ . '/../../bin'), ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1], null, null)->run();
     }
 
