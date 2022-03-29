@@ -21,7 +21,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
      *
      * @var string
      */
-    public $signature = 'octane:workerman
+    public $signature = 'workerman:http
                     {mode=start : Workerman server mode [ start | daemon | reload | stop ]}
                     {--host=0.0.0.0 : The IP address the server should bind to}
                     {--port=8000 : The port the server should be available on}
