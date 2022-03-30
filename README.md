@@ -74,10 +74,13 @@ configuration write in `octane.php`
 
 mode options : ( start / daemon / stop )
 
-## Start
+## Useage
 
 ```shell
-php artisan octane:workerman --port=9502 --host=0.0.0.0 --mode=start
+php artisan octane:workerman --port=9502 --host=0.0.0.0 start
+php artisan octane:workerman --port=9502 --host=0.0.0.0 daemon
+php artisan octane:workerman reload
+php artisan octane:workerman stop
 ```
 
 ## Documentation

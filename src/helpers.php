@@ -30,6 +30,23 @@ if (!function_exists('cpu_count')) {
     }
 }
 
+if (!function_exists('create_laravel_application_for_worker')) {
+    /**
+     * 在 worker 内部引入 laravel 与 webman_config
+     *
+     * @param  \Workerman\Worker $worker
+     * @return void
+     */
+    function create_laravel_application_for_worker(\Workerman\Worker $worker)
+    {
+        require_once $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
+
+        $worker->app = (new \Laravel\Octane\ApplicationFactory($_SERVER['APP_BASE_PATH']))->createApplication();
+
+        \JieAnthony\LaravelOctaneWorkerman\WebmanConfig::load($worker->app->configPath());
+    }
+}
+
 if (!function_exists('worker_bind')) {
     /**
      * @param $worker
@@ -69,10 +86,6 @@ if (!function_exists('worker_start')) {
     function worker_start($process_name, $config)
     {
         $worker = new \Workerman\Worker($config['listen'] ?? null, $config['context'] ?? []);
-
-        $worker->app = (new \Laravel\Octane\ApplicationFactory($_SERVER['APP_BASE_PATH']))->createApplication();
-        \JieAnthony\LaravelOctaneWorkerman\WebmanConfig::load($worker->app->configPath());
-
         $property_map = [
             'count',
             'user',
@@ -92,7 +105,7 @@ if (!function_exists('worker_start')) {
         }
 
         $worker->onWorkerStart = function ($worker) use ($config) {
-            require_once $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
+            create_laravel_application_for_worker($worker);
 
             foreach ($config['services'] ?? [] as $server) {
                 if (!class_exists($server['handler'])) {
