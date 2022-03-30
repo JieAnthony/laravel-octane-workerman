@@ -189,9 +189,14 @@ php artisan workerman:http stop
 * [Workerman](https://github.com/walkor/Workerman)
 * [Laravel](https://github.com/laravel/laravel)
 * [Octane](https://github.com/laravel/octane)
+* [laravel-octane-workerman](https://github.com/JieAnthony/laravel-octane-workerman)
 
-### TODO
-* Support Workerman v5  
+## Contact
+
+Join QQ Group <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=gGezeVnF0yXZjkg_cmBjXojE__v38NbU&jump_from=webapi"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="laravel-octane-gatewayworker" title="laravel-octane-gatewayworker"></a>
+
+<img src="images/laravel-octane-gatewayworker group qrcode.png" alt="laravel-octane-gatewayworker 群聊二维码" />
+
 
 ## License
 
