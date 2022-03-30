@@ -53,8 +53,8 @@ configuration write in `octane.php`
         'registerAddress' => '127.0.0.1:7000',
         'onWorkerStart' => null,
         'onWorkerStop' => null,
-        'onConnect' => [App\Websocket::class, 'onConnect'],
-        'onClose' => [App\Websocket::class, 'onClose'],
+        // 'onConnect' => [App\Websocket::class, 'onConnect'],
+        // 'onClose' => [App\Websocket::class, 'onClose'],
     ],
     'gateway-tcp' => [
         'enable' => true,
@@ -70,8 +70,8 @@ configuration write in `octane.php`
         'registerAddress' => '127.0.0.1:7000',
         'onWorkerStart' => null,
         'onWorkerStop' => null,
-        'onConnect' => [App\Websocket::class, 'onConnect'],
-        'onClose' => [App\Websocket::class, 'onClose'],
+        // 'onConnect' => [App\Websocket::class, 'onConnect'],
+        // 'onClose' => [App\Websocket::class, 'onClose'],
     ],
     'business' => [
         'enable' => true,
@@ -83,7 +83,7 @@ configuration write in `octane.php`
         'registerAddress' => '127.0.0.1:7000',
         // 'onWorkerStart' => [App\Events::class, 'onWorkerStart'],
         'onWorkerStop' => null,
-        'eventHandler' => App\Events::class,
+        // 'eventHandler' => App\Events::class,
     ],
     'process' => [
         'database-heartbeat' => [
