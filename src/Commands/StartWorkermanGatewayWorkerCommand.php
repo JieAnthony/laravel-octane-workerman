@@ -41,6 +41,14 @@ class StartWorkermanGatewayWorkerCommand extends Command implements SignalableCo
             return 1;
         }
 
+        if (!$this->option('host')) {
+            $this->input->setOption('host', config('octane.gatewayworker.http.host'));
+        }
+
+        if (!$this->option('port')) {
+            $this->input->setOption('port', config('octane.gatewayworker.http.port'));
+        }
+
         return match ($mode = $this->argument('mode')) {
             default => $this->error('Error workerman server mode'),
             'start', 'daemon' => $this->serverStart($inspector, $serverStateFile, $mode == 'daemon'),
@@ -131,8 +139,8 @@ class StartWorkermanGatewayWorkerCommand extends Command implements SignalableCo
     protected function writeServerStateFile(ServerStateFile $serverStateFile, bool $daemon = false)
     {
         $serverStateFile->writeState([
-            'host' => $this->option('host') ?: config('octane.gatewayworker.http.host'),
-            'port' => $this->option('port') ?: config('octane.gatewayworker.http.port'),
+            'host' => $this->option('host'),
+            'port' => $this->option('port'),
             'daemon' => $daemon,
             'maxRequests' => $this->option('max-requests'),
             'octaneConfig' => config('octane'),
