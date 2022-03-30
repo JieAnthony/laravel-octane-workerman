@@ -6,7 +6,7 @@ Laravel Octane Workerman
 Start the laravel project through `gatewayworker` to make the development of laravel in the Internet of Things more convenient. Fetch and communicate with different gateways via API.
 
 <details>
- <summary>See the Websocket Gateway and API signal communication</summary>
+ <summary>**See the Websocket Gateway and API signal communication `Screenshot`**</summary>
  
 
 ![image](https://user-images.githubusercontent.com/10336437/160743947-80837068-5ca6-4ee7-a560-d108878fedbd.png)
