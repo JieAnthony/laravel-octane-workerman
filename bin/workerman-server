@@ -16,6 +16,11 @@ error_reporting(E_ALL);
 $basePath = require $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
 
 $data = json_decode(file_get_contents($_SERVER['argv'][2]), true);
+$daemon = $data['state']['daemon'];
+$publicPath = $data['state']['publicPath'];
+$octaneConfig = $data['state']['octaneConfig'];
+$config = $octaneConfig['workerman'] ?? $octaneConfig['gatewayworker'];
+$httpConfig = $config['http'];
 
 define('MAX_REQUEST', (int)$data['state']['maxRequests']);
 
@@ -32,12 +37,6 @@ WorkermanWorker::$onMasterReload = function () {
         }
     }
 };
-
-$daemon = $data['state']['daemon'];
-$publicPath = $data['state']['publicPath'];
-$octaneConfig = $data['state']['octaneConfig'];
-$config = $octaneConfig['workerman'] ?? $octaneConfig['gatewayworker'];
-$httpConfig = $config['http'];
 
 WorkermanWorker::$pidFile = $httpConfig['pid_file'];
 WorkermanWorker::$stdoutFile = $httpConfig['stdout_file'];
