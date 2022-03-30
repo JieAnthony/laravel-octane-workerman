@@ -1,6 +1,13 @@
 Laravel Octane Workerman
 ---
 
+## Todos
+
+[] add make Events command
+[] add make Socket Command
+[] add make CustomProcess command
+[] add global setRegisterAddress of API method
+
 ## Screenshot
 
 Start the laravel project through `gatewayworker` to make the development of laravel in the Internet of Things more convenient. Fetch and communicate with different gateways via API.
