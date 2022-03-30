@@ -98,13 +98,17 @@ if ($httpConfig['enable']) {
 if (\DIRECTORY_SEPARATOR === '/') {
     $process = $config['process'] ?? [];
     foreach ($process as $process_name => $config) {
-        worker_start($process_name, $config);
+        if ($config['enable'] ?? false) {
+            worker_start($process_name, $config);
+        }
     }
 
     foreach (webman_config('plugin') ?? [] as $firm => $projects) {
         foreach ($projects as $name => $project) {
             foreach ($project['process'] ?? [] as $process_name => $config) {
-                worker_start("plugin.$firm.$name.$process_name", $config);
+                if ($config['enable'] ?? false) {
+                    worker_start("plugin.$firm.$name.$process_name", $config);
+                }
             }
         }
     }

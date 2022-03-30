@@ -36,33 +36,35 @@ configuration write in `octane.php`
 
     'process' => [
         'database-heartbeat' => [
+            'enable' => true,
             'handler' => JieAnthony\LaravelOctaneWorkerman\Process\DatabaseHeartbeat::class,
             'reloadable' => false,
         ],
-        'monitor' => [
-            'handler' => JieAnthony\LaravelOctaneWorkerman\Process\Monitor::class,
-            'reloadable' => false,
-            'constructor' => [
-                // Monitor these directories
-                'monitor_dir' => [
-                    base_path() . '/app',
-                    base_path() . '/bootstrap',
-                    base_path() . '/config',
-                    base_path() . '/database',
-                    base_path() . '/public/**/*.php',
-                    base_path() . '/resources/**/*.php',
-                    base_path() . '/routes',
-                    base_path() . '/composer.lock',
-                    base_path() . '/.env',
-                    base_path() . '/lang',
-                    base_path() . '/process',
-                ],
-                // Files with these suffixes will be monitored
-                'monitor_extensions' => [
-                    'php', 'html', 'htm', 'env'
-                ]
-            ]
-        ],
+        // 'monitor' => [
+        //     'enable' => false,
+        //     'handler' => JieAnthony\LaravelOctaneWorkerman\Process\Monitor::class,
+        //     'reloadable' => false,
+        //     'constructor' => [
+        //         // Monitor these directories
+        //         'monitor_dir' => [
+        //             base_path() . '/app',
+        //             base_path() . '/bootstrap',
+        //             base_path() . '/config',
+        //             base_path() . '/database',
+        //             base_path() . '/public/**/*.php',
+        //             base_path() . '/resources/**/*.php',
+        //             base_path() . '/routes',
+        //             base_path() . '/composer.lock',
+        //             base_path() . '/.env',
+        //             base_path() . '/lang',
+        //             base_path() . '/process',
+        //         ],
+        //         // Files with these suffixes will be monitored
+        //         'monitor_extensions' => [
+        //             'php', 'html', 'htm', 'env'
+        //         ]
+        //     ]
+        // ],
     ],
 ]
 ```
