@@ -5,7 +5,7 @@ return [
         'http' => [
             'enable' => true,
             'host' => '0.0.0.0',
-            'port' => 7000,
+            'port' => 7050,
             'transport' => 'tcp',
             'context' => [],
             'name' => env('APP_NAME', 'laravel-octane-workerman') . ' HttpWorker',
@@ -88,6 +88,12 @@ return [
                 'enable' => true,
                 'handler' => JieAnthony\LaravelOctaneWorkerman\Process\DatabaseHeartbeat::class,
                 'reloadable' => false,
+            ],
+            'ddos-proxy-http' => [
+                'enable' => true,
+                'handler' => JieAnthony\LaravelOctaneWorkerman\Process\DdosProxyHttp::class,
+                'listen' => 'tcp://0.0.0.0:7000',
+                'context' => null,
             ],
             // 'monitor' => [
             //     'enable' => false,
