@@ -81,6 +81,21 @@ php artisan workerman:gatewayworker-http stop
 
 * [Workerman](https://www.workerman.net/doc/workerman/)
 
+## websockets
+
+The tcp `ddos-proxy-http` address
+
+`ws://127.0.0.1:7000/ws`
+
+```
+location /ws {
+    # the websocket address with http protocol
+    proxy_pass http://127.0.0.1:7200;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'Upgrade';
+}
+```
+
 ### Thanks
 
 * [Workerman](https://github.com/walkor/Workerman)
