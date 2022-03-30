@@ -12,7 +12,6 @@ class Gateway
         }
 
         \GatewayClient\Gateway::$registerAddress = $registerAddress;
-        \GatewayWorker\Gateway::$registerAddress = $registerAddress;
         \GatewayWorker\Lib\Gateway::$registerAddress = $registerAddress;
     }
 }
