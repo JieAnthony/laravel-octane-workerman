@@ -87,10 +87,12 @@ configuration write in `octane.php`
     ],
     'process' => [
         'database-heartbeat' => [
+            'enable' => true,
             'handler' => JieAnthony\LaravelOctaneWorkerman\Process\DatabaseHeartbeat::class,
             'reloadable' => false,
         ],
         // 'monitor' => [
+        //     'enable' => false,
         //     'handler' => JieAnthony\LaravelOctaneWorkerman\Process\Monitor::class,
         //     'reloadable' => false,
         //     'constructor' => [
