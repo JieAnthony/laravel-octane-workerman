@@ -40,24 +40,45 @@ if ($config['register']['enable']) {
     };
 }
 
-// gateway 进程
-if ($config['gateway']['enable']) {
-    $gateway = new Gateway("{$config['gateway']['protocol']}://{$config['gateway']['host']}:{$config['gateway']['port']}");
-    $gateway->name = $config['gateway']['name'];
-    $gateway->count = $config['gateway']['count'];
-    $gateway->lanIp = $config['gateway']['lanIp'];
-    $gateway->startPort = $config['gateway']['startPort'];
-    $gateway->pingInterval = $config['gateway']['pingInterval'];
-    $gateway->pingData = $config['gateway']['pingData'];
-    $gateway->registerAddress = $config['gateway']['registerAddress'];
-    $gateway->onWorkerStart = $config['gateway']['onWorkerStart'] ?? function ($worker) {
+// gateway 进程, websocket 协议
+if ($config['gateway-websocket']['enable']) {
+    $gatewayWebsocket = new Gateway("{$config['gateway-websocket']['protocol']}://{$config['gateway-websocket']['host']}:{$config['gateway-websocket']['port']}");
+    $gatewayWebsocket->name = $config['gateway-websocket']['name'];
+    $gatewayWebsocket->count = $config['gateway-websocket']['count'];
+    $gatewayWebsocket->lanIp = $config['gateway-websocket']['lanIp'];
+    $gatewayWebsocket->startPort = $config['gateway-websocket']['startPort'];
+    $gatewayWebsocket->pingInterval = $config['gateway-websocket']['pingInterval'];
+    $gatewayWebsocket->pingData = $config['gateway-websocket']['pingData'];
+    $gatewayWebsocket->registerAddress = $config['gateway-websocket']['registerAddress'];
+    $gatewayWebsocket->onWorkerStart = $config['gateway-websocket']['onWorkerStart'] ?? function ($worker) {
         create_laravel_application_for_worker($worker);
     };
-    $gateway->onWorkerStop = $config['gateway']['onWorkerStop'] ?? function () {
+    $gatewayWebsocket->onWorkerStop = $config['gateway']['onWorkerStop'] ?? function () {
     };
-    $gateway->onConnect = $config['gateway']['onConnect'] ?? function () {
+    $gatewayWebsocket->onConnect = $config['gateway']['onConnect'] ?? function () {
     };
-    $gateway->onClose = $config['gateway']['onClose'] ?? function () {
+    $gatewayWebsocket->onClose = $config['gateway']['onClose'] ?? function () {
+    };
+}
+
+// gateway 进程, tcp 协议
+if ($config['gateway-tcp']['enable']) {
+    $gatewayTcp = new Gateway("{$config['gateway-tcp']['protocol']}://{$config['gateway-tcp']['host']}:{$config['gateway-tcp']['port']}");
+    $gatewayTcp->name = $config['gateway-tcp']['name'];
+    $gatewayTcp->count = $config['gateway-tcp']['count'];
+    $gatewayTcp->lanIp = $config['gateway-tcp']['lanIp'];
+    $gatewayTcp->startPort = $config['gateway-tcp']['startPort'];
+    $gatewayTcp->pingInterval = $config['gateway-tcp']['pingInterval'];
+    $gatewayTcp->pingData = $config['gateway-tcp']['pingData'];
+    $gatewayTcp->registerAddress = $config['gateway-tcp']['registerAddress'];
+    $gatewayTcp->onWorkerStart = $config['gateway-tcp']['onWorkerStart'] ?? function ($worker) {
+        create_laravel_application_for_worker($worker);
+    };
+    $gatewayTcp->onWorkerStop = $config['gateway']['onWorkerStop'] ?? function () {
+    };
+    $gatewayTcp->onConnect = $config['gateway']['onConnect'] ?? function () {
+    };
+    $gatewayTcp->onClose = $config['gateway']['onClose'] ?? function () {
     };
 }
 
@@ -99,52 +120,54 @@ WorkermanWorker::$logFile = $httpConfig['log_file'];
 WorkermanWorker::$daemonize = $daemon;
 TcpConnection::$defaultMaxPackageSize = $httpConfig['max_package_size'] ?? 10 * 1024 * 1024;
 
-$workerman = new WorkermanWorker("http://{$data['state']['host']}:{$data['state']['port']}", $httpConfig['context'] ?? []);
+if ($config['http']['enable']) {
+    $workerman = new WorkermanWorker("http://{$data['state']['host']}:{$data['state']['port']}", $httpConfig['context'] ?? []);
 
-$workerman->count = $httpConfig['count'] ?: cpu_count() * 2;
-$workerman->name = $httpConfig['name'];
-$workerman->user = $httpConfig['user'];
-$workerman->group = $httpConfig['group'];
-$workerman->reusePort = $httpConfig['reuse_port'];
-$workerman->transport = $httpConfig['transport'];
+    $workerman->count = $httpConfig['count'] ?: cpu_count() * 2;
+    $workerman->name = $httpConfig['name'];
+    $workerman->user = $httpConfig['user'];
+    $workerman->group = $httpConfig['group'];
+    $workerman->reusePort = $httpConfig['reuse_port'];
+    $workerman->transport = $httpConfig['transport'];
 
-$worker = null;
-$workermanClient = new WorkermanClient;
+    $worker = null;
+    $workermanClient = new WorkermanClient;
 
-$workerman->onMessage = function (ConnectionInterface $connection, Request $workermanRequest) use (
-    $worker,
-    $workermanClient,
-    $basePath,
-    $publicPath,
-    $octaneConfig,
-) {
-    static $request_count = 0;
+    $workerman->onMessage = function (ConnectionInterface $connection, Request $workermanRequest) use (
+        $worker,
+        $workermanClient,
+        $basePath,
+        $publicPath,
+        $octaneConfig,
+    ) {
+        static $request_count = 0;
 
-    try {
-        /** @var Worker $worker */
-        $worker = tap((new Worker(
-            new ApplicationFactory($basePath), $workermanClient
-        )))->boot();
+        try {
+            /** @var Worker $worker */
+            $worker = tap((new Worker(
+                new ApplicationFactory($basePath), $workermanClient
+            )))->boot();
 
-    } catch (Throwable $e) {
-        $connection->send($e->getMessage());
+        } catch (Throwable $e) {
+            $connection->send($e->getMessage());
 
-        exit(1);
-    }
+            exit(1);
+        }
 
-    [$request, $context] = $workermanClient->marshalRequest(new RequestContext([
-        'workermanRequest' => $workermanRequest,
-        'connection' => $connection,
-        'publicPath' => $publicPath,
-        'octaneConfig' => $octaneConfig,
-    ]));
+        [$request, $context] = $workermanClient->marshalRequest(new RequestContext([
+            'workermanRequest' => $workermanRequest,
+            'connection' => $connection,
+            'publicPath' => $publicPath,
+            'octaneConfig' => $octaneConfig,
+        ]));
 
-    $worker->handle($request, $context);
+        $worker->handle($request, $context);
 
-    if (++$request_count >= MAX_REQUEST) {
-        WorkermanWorker::stopAll();
-    }
-};
+        if (++$request_count >= MAX_REQUEST) {
+            WorkermanWorker::stopAll();
+        }
+    };
+}
 
 // Windows does not support custom processes.
 if (\DIRECTORY_SEPARATOR === '/') {
