@@ -133,10 +133,10 @@ mode options : ( start / daemon / stop )
 ## Useage
 
 ```shell
-php artisan octane:workerman --port=9502 --host=0.0.0.0 start
-php artisan octane:workerman --port=9502 --host=0.0.0.0 daemon
-php artisan octane:workerman reload
-php artisan octane:workerman stop
+php artisan workerman:gateway --port=9502 --host=0.0.0.0 start
+php artisan workerman:gateway --port=9502 --host=0.0.0.0 daemon
+php artisan workerman:gateway reload
+php artisan workerman:gateway stop
 ```
 
 ## Documentation
