@@ -137,8 +137,17 @@ mode options : ( start / daemon / stop )
 ```shell
 php artisan workerman:gateway --port=9502 --host=0.0.0.0 start
 php artisan workerman:gateway --port=9502 --host=0.0.0.0 daemon
+php artisan workerman:gateway start
+php artisan workerman:gateway daemon
 php artisan workerman:gateway reload
 php artisan workerman:gateway stop
+
+php artisan workerman:http --port=9502 --host=0.0.0.0 start
+php artisan workerman:http --port=9502 --host=0.0.0.0 daemon
+php artisan workerman:http start
+php artisan workerman:http daemon
+php artisan workerman:http reload
+php artisan workerman:http stop
 ```
 
 ## Documentation
