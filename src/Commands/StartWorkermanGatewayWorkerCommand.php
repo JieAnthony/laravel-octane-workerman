@@ -49,6 +49,14 @@ class StartWorkermanGatewayWorkerCommand extends Command implements SignalableCo
             $this->input->setOption('port', config('octane.gatewayworker.http.port'));
         }
 
+        if (!$this->option('host')) {
+            $this->input->setOption('host', config('octane.gatewayworker.http.host'));
+        }
+
+        if (!$this->option('port')) {
+            $this->input->setOption('port', config('octane.gatewayworker.http.port'));
+        }
+
         return match ($mode = $this->argument('mode')) {
             default => $this->error('Error workerman server mode'),
             'start', 'daemon' => $this->serverStart($inspector, $serverStateFile, $mode == 'daemon'),
