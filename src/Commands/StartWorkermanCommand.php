@@ -40,7 +40,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
         if (!$this->ensureWorkermanPackageIsInstalled()) {
             return 1;
         }
-        
+
         if (!$this->option('host')) {
             $this->input->setOption('host', config('octane.gatewayworker.http.host'));
         }
@@ -137,7 +137,7 @@ class StartWorkermanCommand extends Command implements SignalableCommandInterfac
     }
 
     protected function writeServerStateFile(ServerStateFile $serverStateFile, bool $daemon = false)
-    {        
+    {
         $serverStateFile->writeState([
             'host' => $this->option('host'),
             'port' => $this->option('port'),
