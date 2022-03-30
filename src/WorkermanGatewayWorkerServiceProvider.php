@@ -12,8 +12,8 @@ class WorkermanGatewayWorkerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->publishes([
-            $configPath = __DIR__.'/config/workerman.php' => config_path('workerman.php'),
-        ], 'workerman-gatewayworker-config');
+            $configPath = __DIR__.'/../config/workerman.php' => config_path('workerman.php'),
+        ], 'laravel-octane-workerman');
 
         $this->mergeConfigFrom(
             $configPath, 'workerman'
