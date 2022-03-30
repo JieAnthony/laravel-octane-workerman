@@ -1,0 +1,15 @@
+<?php
+
+namespace { namespace };
+
+class { class }
+{
+    public static function onConnect($connection)
+    {
+    }
+
+    public static function onClose($connection)
+    {
+        $connection->close();
+    }
+}
