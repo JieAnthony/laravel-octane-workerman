@@ -1,22 +1,22 @@
 <?php
 
-namespace { namespace };
+namespace {{ namespace }};
 
-class { class }
+class {{ class }}
 {
-    // public static function onWorkerStart($worker)
-    // {
-    //     create_laravel_application_for_worker($worker);
-    // }
-
-    // public static function onClose($connection)
-    // {
-    //     $connection->close();
-    // }
+    public static function onWorkerStart($worker)
+    {
+        create_laravel_application_for_worker($worker);
+    }
 
     public static function onMessage()
     {
         var_dump(config('app.debug'));
         var_dump(func_get_args());
+    }
+
+    public static function onWorkerStop($connection)
+    {
+        $connection->close();
     }
 }

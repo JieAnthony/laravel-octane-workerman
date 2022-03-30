@@ -1,9 +1,17 @@
 <?php
 
-namespace { namespace };
+namespace {{ namespace }};
 
-class { class }
+class {{ class }}
 {
+    public static function onWorkerStart($connection)
+    {
+    }
+
+    public static function onWorkerStop($connection)
+    {
+    }
+    
     public static function onConnect($connection)
     {
     }

@@ -21,7 +21,7 @@ class StartWorkermanHttpCommand extends Command implements SignalableCommandInte
      *
      * @var string
      */
-    public $signature = 'workerman:http
+    public $signature = 'workerman:gatewayworker-http
                     {mode=start : Workerman server mode [ start | daemon | reload | stop ]}
                     {--host : The IP address the server should bind to}
                     {--port : The port the server should be available on}
