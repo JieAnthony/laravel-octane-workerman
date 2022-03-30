@@ -1,0 +1,26 @@
+<?php
+
+namespace {{ namespace }};
+
+use Workerman\Timer;
+use Workerman\Worker;
+
+class {{ class }}
+{
+    public function onWorkerStart($connection)
+    {
+    }
+
+    public function onWorkerStop($connection)
+    {
+    }
+    
+    public function onConnect($connection)
+    {
+    }
+
+    public function onClose($connection)
+    {
+        $connection->close();
+    }
+}
