@@ -194,7 +194,7 @@ php artisan workerman:http stop
 
 ## Contact
 
-Join QQ Group <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=gGezeVnF0yXZjkg_cmBjXojE__v38NbU&jump_from=webapi"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="laravel-octane-gatewayworker" title="laravel-octane-gatewayworker"> 650057913</a>
+Join QQ Group <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=gGezeVnF0yXZjkg_cmBjXojE__v38NbU&jump_from=webapi"><img border="0" src="images/group.png" alt="laravel-octane-gatewayworker" title="laravel-octane-gatewayworker"> 650057913</a>
 
 <img src="images/laravel-octane-gatewayworker group qrcode.png" alt="laravel-octane-gatewayworker 群聊二维码" />
 
