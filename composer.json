@@ -38,7 +38,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "JieAnthony\\LaravelOctaneWorkerman\\LaravelOctaneWorkermanServiceProvider"
+                "JieAnthony\\LaravelOctaneWorkerman\\LaravelOctaneWorkermanServiceProvider",
+                "JieAnthony\\LaravelOctaneWorkerman\\WorkermanGatewayWorkerServiceProvider"
             ]
         }
     },

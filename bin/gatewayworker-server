@@ -93,12 +93,19 @@ if ($config['business']['enable']) {
     };
     $business->onWorkerStop = $config['business']['onWorkerStop'] ?? function (BusinessWorker $businessWorker) {
     };
-    $business->eventHandler = $config['business']['eventHandler'] ?? new class {
-        public function onMessage(string $client_id, string $recv_data)
-        {
-            var_dump("client_id $client_id recv_data $recv_data");
+
+    if (empty($config['business']['eventHandler']) && !class_exists('Events')) {
+        if (!class_exists('Events')) {
+            class Events {
+                public static function onMessage(string $client_id, string $recv_data)
+                {
+                    var_dump("client_id $client_id recv_data $recv_data");
+                }
+            };
         }
-    };
+    }
+
+    $business->eventHandler = $config['business']['eventHandler'] ?? 'Events';
 }
 
 WorkermanWorker::$onMasterReload = function () {
