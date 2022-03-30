@@ -2,6 +2,7 @@
 
 namespace JieAnthony\LaravelOctaneWorkerman;
 
+use GatewayClient\Gateway;
 use Illuminate\Support\ServiceProvider;
 use JieAnthony\LaravelOctaneWorkerman\Commands\StartWorkermanHttpCommand;
 use JieAnthony\LaravelOctaneWorkerman\Commands\StartWorkermanGatewayWorkerCommand;

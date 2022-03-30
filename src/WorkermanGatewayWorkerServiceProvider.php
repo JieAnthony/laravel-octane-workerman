@@ -24,6 +24,8 @@ class WorkermanGatewayWorkerServiceProvider extends ServiceProvider
                 'octane.gatewayworker' => config('workerman.gatewayworker'),
             ]);
         }
+
+        Gateway::resolveRegisterAddress();
     }
 
     public function boot()

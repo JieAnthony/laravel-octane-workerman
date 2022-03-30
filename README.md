@@ -6,7 +6,7 @@ Laravel Octane Workerman
 - [  ] Support Workerman v5
 - [x] add make Events command
 - [x] add make Socket Command
-- [ ] add make CustomProcess command
+- [x] add make CustomProcess command
 - [ ] add global setRegisterAddress of API method
 
 ## Screenshot
