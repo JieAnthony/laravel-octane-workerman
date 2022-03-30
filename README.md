@@ -17,17 +17,22 @@ configuration write in `octane.php`
 
 ```php
 'workerman' => [
-    'transport' => 'tcp',
-    'context' => [],
-    'name' => env('APP_NAME', 'laravel-octane-workerman'),
-    'count' => cpu_count() * 2,
-    'user' => '',
-    'group' => '',
-    'reuse_port' => true,
-    'pid_file' => storage_path('logs/laravel-octane-workerman.pid'),
-    'stdout_file' => storage_path('logs/stdout.log'),
-    'log_file' => storage_path('logs/workerman.log'),
-    'max_package_size' => 10 * 1024 * 1024,
+    'http' => [
+        'enable' => true,
+        'host' => '0.0.0.0',
+        'port' => 7000,
+        'transport' => 'tcp',
+        'context' => [],
+        'name' => env('APP_NAME', 'laravel-octane-workerman') . 'HttpWorker',
+        'count' => cpu_count() * 2,
+        'user' => '',
+        'group' => '',
+        'reuse_port' => true,
+        'pid_file' => storage_path('logs/laravel-octane-workerman.pid'),
+        'stdout_file' => storage_path('logs/stdout.log'),
+        'log_file' => storage_path('logs/workerman.log'),
+        'max_package_size' => 10 * 1024 * 1024,
+    ],
 
     'process' => [
         'database-heartbeat' => [
