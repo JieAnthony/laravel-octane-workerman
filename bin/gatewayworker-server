@@ -120,7 +120,7 @@ WorkermanWorker::$logFile = $httpConfig['log_file'];
 WorkermanWorker::$daemonize = $daemon;
 TcpConnection::$defaultMaxPackageSize = $httpConfig['max_package_size'] ?? 10 * 1024 * 1024;
 
-if ($config['http']['enable']) {
+if ($httpConfig['enable']) {
     $workerman = new WorkermanWorker("http://{$data['state']['host']}:{$data['state']['port']}", $httpConfig['context'] ?? []);
 
     $workerman->count = $httpConfig['count'] ?: cpu_count() * 2;
