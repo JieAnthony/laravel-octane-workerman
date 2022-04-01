@@ -4,14 +4,14 @@ namespace JieAnthony\LaravelOctaneWorkerman\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 
-class WorkermanGatewayWorkerMakeCustomProcessCommand extends GeneratorCommand
+class WorkermanGatewayMakeSocketsCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'workerman:gatewayworker-make-custom-process {name : The name of the Custom Process}
+    protected $signature = 'workerman:gateway-make-sockets {name : The name of the Sockets}
     {--path= : The location where the migration file should be created}';
 
     /**
@@ -19,15 +19,15 @@ class WorkermanGatewayWorkerMakeCustomProcessCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $description = 'Create a new Custom Process class';
+    protected $description = 'Create a new Sockets class';
 
     protected function getStub(): string
     {
-        if (file_exists(base_path('stubs/CustomProcess.stub'))) {
-            return base_path('stubs/CustomProcess.stub');
+        if (file_exists(base_path('stubs/Sockets.stub'))) {
+            return base_path('stubs/Sockets.stub');
         }
 
-        return __DIR__.'/stubs/CustomProcess.stub';
+        return __DIR__.'/stubs/Sockets.stub';
     }
 
     protected function getPath($name)

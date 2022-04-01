@@ -11,9 +11,9 @@ use Symfony\Component\Console\Command\SignalableCommandInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
-class StartWorkermanHttpCommand extends Command implements SignalableCommandInterface
+class StartWorkermanGatewayCommand extends Command implements SignalableCommandInterface
 {
-    use Concerns\InstallsWorkermanDependencies;
+    use Concerns\InstallsGatewayWorkerDependencies;
     use InteractsWithServers;
 
     /**
@@ -21,7 +21,7 @@ class StartWorkermanHttpCommand extends Command implements SignalableCommandInte
      *
      * @var string
      */
-    public $signature = 'workerman:gatewayworker-http
+    public $signature = 'workerman:gateway
                     {mode=start : Workerman server mode [ start | daemon | reload | stop ]}
                     {--host : The IP address the server should bind to}
                     {--port : The port the server should be available on}
@@ -70,7 +70,7 @@ class StartWorkermanHttpCommand extends Command implements SignalableCommandInte
         $server = new Process(
             [
                 (new PhpExecutableFinder())->find(),
-                'workerman-server',
+                'gatewayworker-server',
                 'start',
                 $serverStateFile->path(),
                 base_path()
@@ -98,7 +98,7 @@ class StartWorkermanHttpCommand extends Command implements SignalableCommandInte
 
     protected function serverReload(ServerProcessInspector $inspector)
     {
-        $inspector->reloadServer();
+        $inspector->reloadServer('gatewayworker-server');
 
         $this->info('The workerman server reload successfully');
 
@@ -115,7 +115,7 @@ class StartWorkermanHttpCommand extends Command implements SignalableCommandInte
             new Process(
                 [
                     (new PhpExecutableFinder())->find(),
-                    'workerman-server', 'stop',
+                    'gatewayworker-server', 'stop',
                     $serverStateFile->path(),
                     base_path()
                 ],

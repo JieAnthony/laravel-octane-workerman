@@ -69,12 +69,16 @@ php artisan workerman:gateway daemon
 php artisan workerman:gateway reload
 php artisan workerman:gateway stop
 
-php artisan workerman:gatewayworker-http --port=9502 --host=0.0.0.0 start
-php artisan workerman:gatewayworker-http --port=9502 --host=0.0.0.0 daemon
-php artisan workerman:gatewayworker-http start
-php artisan workerman:gatewayworker-http daemon
-php artisan workerman:gatewayworker-http reload
-php artisan workerman:gatewayworker-http stop
+php artisan workerman:gateway-make-sockets Sockets
+php artisan workerman:gateway-make-events Events
+php artisan workerman:gateway-make-custom-process CustomProcess
+
+php artisan workerman:gateway-http --port=9502 --host=0.0.0.0 start
+php artisan workerman:gateway-http --port=9502 --host=0.0.0.0 daemon
+php artisan workerman:gateway-http start
+php artisan workerman:gateway-http daemon
+php artisan workerman:gateway-http reload
+php artisan workerman:gateway-http stop
 ```
 
 ## Documentation

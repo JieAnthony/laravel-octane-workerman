@@ -4,8 +4,8 @@ namespace JieAnthony\LaravelOctaneWorkerman;
 
 use GatewayClient\Gateway;
 use Illuminate\Support\ServiceProvider;
-use JieAnthony\LaravelOctaneWorkerman\Commands\StartWorkermanHttpCommand;
-use JieAnthony\LaravelOctaneWorkerman\Commands\StartWorkermanGatewayWorkerCommand;
+use JieAnthony\LaravelOctaneWorkerman\Commands\StartWorkermanGatewayHttpCommand;
+use JieAnthony\LaravelOctaneWorkerman\Commands\StartWorkermanGatewayCommand;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\ServerProcessInspector as WorkermanServerProcessInspector;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\ServerStateFile as WorkermanServerStateFile;
 use Laravel\Octane\SymfonyProcessFactory;
@@ -33,8 +33,8 @@ class LaravelOctaneWorkermanServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                StartWorkermanHttpCommand::class,
-                StartWorkermanGatewayWorkerCommand::class,
+                StartWorkermanGatewayHttpCommand::class,
+                StartWorkermanGatewayCommand::class,
             ]);
         }
     }

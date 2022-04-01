@@ -3,9 +3,9 @@
 namespace JieAnthony\LaravelOctaneWorkerman;
 
 use Illuminate\Support\ServiceProvider;
-use JieAnthony\LaravelOctaneWorkerman\Commands\WorkermanGatewayWorkerMakeSocketsCommand;
-use JieAnthony\LaravelOctaneWorkerman\Commands\WorkermanGatewayWorkerMakeEventsCommand;
-use JieAnthony\LaravelOctaneWorkerman\Commands\WorkermanGatewayWorkerMakeCustomProcessCommand;
+use JieAnthony\LaravelOctaneWorkerman\Commands\WorkermanGatewayMakeSocketsCommand;
+use JieAnthony\LaravelOctaneWorkerman\Commands\WorkermanGatewayMakeEventsCommand;
+use JieAnthony\LaravelOctaneWorkerman\Commands\WorkermanGatewayMakeCustomProcessCommand;
 
 class WorkermanGatewayWorkerServiceProvider extends ServiceProvider
 {
@@ -32,9 +32,9 @@ class WorkermanGatewayWorkerServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                WorkermanGatewayWorkerMakeSocketsCommand::class,
-                WorkermanGatewayWorkerMakeEventsCommand::class,
-                WorkermanGatewayWorkerMakeCustomProcessCommand::class,
+                WorkermanGatewayMakeSocketsCommand::class,
+                WorkermanGatewayMakeEventsCommand::class,
+                WorkermanGatewayMakeCustomProcessCommand::class,
             ]);
         }
     }

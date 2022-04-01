@@ -11,9 +11,9 @@ use Symfony\Component\Console\Command\SignalableCommandInterface;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
-class StartWorkermanGatewayWorkerCommand extends Command implements SignalableCommandInterface
+class StartWorkermanGatewayHttpCommand extends Command implements SignalableCommandInterface
 {
-    use Concerns\InstallsGatewayWorkerDependencies;
+    use Concerns\InstallsWorkermanDependencies;
     use InteractsWithServers;
 
     /**
@@ -21,7 +21,7 @@ class StartWorkermanGatewayWorkerCommand extends Command implements SignalableCo
      *
      * @var string
      */
-    public $signature = 'workerman:gatewayworker
+    public $signature = 'workerman:gateway-http
                     {mode=start : Workerman server mode [ start | daemon | reload | stop ]}
                     {--host : The IP address the server should bind to}
                     {--port : The port the server should be available on}
@@ -70,7 +70,7 @@ class StartWorkermanGatewayWorkerCommand extends Command implements SignalableCo
         $server = new Process(
             [
                 (new PhpExecutableFinder())->find(),
-                'gatewayworker-server',
+                'workerman-server',
                 'start',
                 $serverStateFile->path(),
                 base_path()
@@ -98,7 +98,7 @@ class StartWorkermanGatewayWorkerCommand extends Command implements SignalableCo
 
     protected function serverReload(ServerProcessInspector $inspector)
     {
-        $inspector->reloadServer('gatewayworker-server');
+        $inspector->reloadServer();
 
         $this->info('The workerman server reload successfully');
 
@@ -115,7 +115,7 @@ class StartWorkermanGatewayWorkerCommand extends Command implements SignalableCo
             new Process(
                 [
                     (new PhpExecutableFinder())->find(),
-                    'gatewayworker-server', 'stop',
+                    'workerman-server', 'stop',
                     $serverStateFile->path(),
                     base_path()
                 ],

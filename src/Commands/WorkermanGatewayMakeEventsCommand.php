@@ -4,14 +4,14 @@ namespace JieAnthony\LaravelOctaneWorkerman\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 
-class WorkermanGatewayWorkerMakeEventsCommand extends GeneratorCommand
+class WorkermanGatewayMakeEventsCommand extends GeneratorCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'workerman:gatewayworker-make-events {name : The name of the Events}
+    protected $signature = 'workerman:gateway-make-events {name : The name of the Events}
         {--path= : The location where the migration file should be created}';
 
     /**
