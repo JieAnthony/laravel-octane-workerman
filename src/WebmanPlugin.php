@@ -22,7 +22,11 @@ class WebmanPlugin
         $plugin_const = "\\{$namespace}Install::WEBMAN_PLUGIN";
         
         if (defined($plugin_const) && is_callable($install_function)) {
-            $install_function();
+            try {
+                $install_function();
+            } catch (\Throwable $e) {
+                echo $e->getMessage()."\n";
+            }
         }
     }
 
@@ -47,7 +51,11 @@ class WebmanPlugin
         $plugin_const = "\\{$namespace}Install::WEBMAN_PLUGIN";
         
         if (defined($plugin_const) && is_callable($uninstall_function)) {
-            $uninstall_function();
+            try {
+                $uninstall_function();
+            } catch (\Throwable $e) {
+                echo $e->getMessage()."\n";
+            }
         }
     }
 
@@ -57,14 +65,18 @@ class WebmanPlugin
         $file = __DIR__ . '/../../../../../support/helpers.php';
         if (is_file($file)) {
             require_once $file;
-            return;
         }
 
         // Plugin.php in webman
         $file = __DIR__ . '/helpers.php';
         if (is_file($file)) {
             require_once $file;
-            return;
+        }
+
+        // Plugin.php in webman
+        $file = __DIR__ . '/../../autoload.php';
+        if (is_file($file)) {
+            require_once $file;
         }
     }
 

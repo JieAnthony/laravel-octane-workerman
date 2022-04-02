@@ -1,7 +1,5 @@
 <?php
 
-use Webman\Middleware;
-
 # autoload files
 foreach (config('autoload.files', []) as $file) {
     include_once $file;

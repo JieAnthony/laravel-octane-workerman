@@ -1,5 +1,73 @@
 <?php
 
+require_once __DIR__.'/webman_helpers.php';
+
+if (!function_exists('is_phar')) {
+    /**
+     * @return bool
+     */
+    function is_phar()
+    {
+        return class_exists(\Phar::class, false) && Phar::running();
+    }
+}
+
+if (!function_exists('app_path')) {
+    /**
+     * @return string
+     */
+    function app_path()
+    {
+        return base_path() . DIRECTORY_SEPARATOR . 'app';
+    }
+}
+
+if (!function_exists('copy_dir')) {
+    /**
+     * Copy dir.
+     * @param $source
+     * @param $dest
+     * @param bool $overwrite
+     * @return void
+     */
+    function copy_dir($source, $dest, $overwrite = false)
+    {
+        if (is_dir($source)) {
+            if (!is_dir($dest)) {
+                mkdir($dest);
+            }
+            $files = scandir($source);
+            foreach ($files as $file) {
+                if ($file !== "." && $file !== "..") {
+                    copy_dir("$source/$file", "$dest/$file");
+                }
+            }
+        } else if (file_exists($source) && ($overwrite || !file_exists($dest))) {
+            copy($source, $dest);
+        }
+    }
+}
+
+if (!function_exists('remove_dir')) {
+
+    /**
+     * Remove dir.
+     * @param $dir
+     * @return bool
+     */
+    function remove_dir($dir)
+    {
+        if (is_link($dir) || is_file($dir)) {
+            return unlink($dir);
+        }
+        $files = array_diff(scandir($dir), array('.', '..'));
+        foreach ($files as $file) {
+            (is_dir("$dir/$file") && !is_link($dir)) ? remove_dir("$dir/$file") : unlink("$dir/$file");
+        }
+        return rmdir($dir);
+    }
+}
+
 if (!function_exists('webman_config')) {
     /**
      * @return array|mixed|null
