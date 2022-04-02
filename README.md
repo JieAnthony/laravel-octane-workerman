@@ -68,6 +68,7 @@ php artisan workerman:gateway start
 php artisan workerman:gateway daemon
 php artisan workerman:gateway reload
 php artisan workerman:gateway stop
+php artisan workerman:gateway status
 
 php artisan workerman:gateway-make-sockets Sockets
 php artisan workerman:gateway-make-events Events
