@@ -8,8 +8,6 @@ use Laravel\Octane\Commands\Concerns\InteractsWithServers;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\ServerProcessInspector;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\ServerStateFile;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 
 class StartWorkermanGatewayCommand extends Command implements SignalableCommandInterface
 {

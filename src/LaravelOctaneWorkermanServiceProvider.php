@@ -33,7 +33,6 @@ class LaravelOctaneWorkermanServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                StartWorkermanGatewayHttpCommand::class,
                 StartWorkermanGatewayCommand::class,
             ]);
         }
