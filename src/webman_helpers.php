@@ -1,6 +1,6 @@
 <?php
 
-defined('BASE_PATH') or define('BASE_PATH', $_SERVER['PWD'] ?? __DIR__.'/temp');
+defined('BASE_PATH') or define('BASE_PATH', $_SERVER['APP_BASE_PATH'] ?? $_SERVER['PWD'] ?? __DIR__.'/temp');
 
 if (!function_exists('base_path')) {
     /**
