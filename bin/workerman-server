@@ -16,6 +16,11 @@ error_reporting(E_ALL);
 $basePath = require $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
 
 $data = json_decode(file_get_contents($_SERVER['argv'][2]), true);
+$daemon = $data['state']['daemon'];
+$publicPath = $data['state']['publicPath'];
+$octaneConfig = $data['state']['octaneConfig'];
+$config = $octaneConfig['workerman'] ?? $octaneConfig['gatewayworker'];
+$httpConfig = $config['http'];
 
 define('MAX_REQUEST', (int)$data['state']['maxRequests']);
 
@@ -33,75 +38,76 @@ WorkermanWorker::$onMasterReload = function () {
     }
 };
 
-$daemon = $data['state']['daemon'];
-$publicPath = $data['state']['publicPath'];
-$octaneConfig = $data['state']['octaneConfig'];
-$config = $octaneConfig['workerman'];
-
-WorkermanWorker::$pidFile = $config['pid_file'];
-WorkermanWorker::$stdoutFile = $config['stdout_file'];
-WorkermanWorker::$logFile = $config['log_file'];
+WorkermanWorker::$pidFile = $httpConfig['pid_file'];
+WorkermanWorker::$stdoutFile = $httpConfig['stdout_file'];
+WorkermanWorker::$logFile = $httpConfig['log_file'];
 WorkermanWorker::$daemonize = $daemon;
-TcpConnection::$defaultMaxPackageSize = $config['max_package_size'] ?? 10 * 1024 * 1024;
+TcpConnection::$defaultMaxPackageSize = $httpConfig['max_package_size'] ?? 10 * 1024 * 1024;
 
-$workerman = new WorkermanWorker("http://{$data['state']['host']}:{$data['state']['port']}", $config['context'] ?? []);
+if ($httpConfig['enable']) {
+    $workerman = new WorkermanWorker("http://{$data['state']['host']}:{$data['state']['port']}", $httpConfig['context'] ?? []);
 
-$workerman->count = $config['count'] ?: cpu_count() * 2;
-$workerman->name = $config['name'];
-$workerman->user = $config['user'];
-$workerman->group = $config['group'];
-$workerman->reusePort = $config['reuse_port'];
-$workerman->transport = $config['transport'];
+    $workerman->count = $httpConfig['count'] ?: cpu_count() * 2;
+    $workerman->name = $httpConfig['name'];
+    $workerman->user = $httpConfig['user'];
+    $workerman->group = $httpConfig['group'];
+    $workerman->reusePort = $httpConfig['reuse_port'];
+    $workerman->transport = $httpConfig['transport'];
 
-$worker = null;
-$workermanClient = new WorkermanClient;
+    $worker = null;
+    $workermanClient = new WorkermanClient;
 
-$workerman->onMessage = function (ConnectionInterface $connection, Request $workermanRequest) use (
-    $worker,
-    $workermanClient,
-    $basePath,
-    $publicPath,
-    $octaneConfig,
-) {
-    static $request_count = 0;
+    $workerman->onMessage = function (ConnectionInterface $connection, Request $workermanRequest) use (
+        $worker,
+        $workermanClient,
+        $basePath,
+        $publicPath,
+        $octaneConfig,
+    ) {
+        static $request_count = 0;
 
-    try {
-        /** @var Worker $worker */
-        $worker = tap((new Worker(
-            new ApplicationFactory($basePath), $workermanClient
-        )))->boot();
+        try {
+            /** @var Worker $worker */
+            $worker = tap((new Worker(
+                new ApplicationFactory($basePath), $workermanClient
+            )))->boot();
 
-    } catch (Throwable $e) {
-        $connection->send($e->getMessage());
+        } catch (Throwable $e) {
+            $connection->send($e->getMessage());
 
-        exit(1);
-    }
+            exit(1);
+        }
 
-    [$request, $context] = $workermanClient->marshalRequest(new RequestContext([
-        'workermanRequest' => $workermanRequest,
-        'connection' => $connection,
-        'publicPath' => $publicPath,
-        'octaneConfig' => $octaneConfig,
-    ]));
+        [$request, $context] = $workermanClient->marshalRequest(new RequestContext([
+            'workermanRequest' => $workermanRequest,
+            'connection' => $connection,
+            'publicPath' => $publicPath,
+            'octaneConfig' => $octaneConfig,
+        ]));
 
-    $worker->handle($request, $context);
+        $worker->handle($request, $context);
 
-    if (++$request_count >= MAX_REQUEST) {
-        WorkermanWorker::stopAll();
-    }
-};
+        if (++$request_count >= MAX_REQUEST) {
+            WorkermanWorker::stopAll();
+        }
+    };
+}
 
 // Windows does not support custom processes.
 if (\DIRECTORY_SEPARATOR === '/') {
     $process = $config['process'] ?? [];
     foreach ($process as $process_name => $config) {
-        worker_start($process_name, $config);
+        if ($config['enable'] ?? false) {
+            worker_start($process_name, $config);
+        }
     }
 
     foreach (webman_config('plugin') ?? [] as $firm => $projects) {
         foreach ($projects as $name => $project) {
             foreach ($project['process'] ?? [] as $process_name => $config) {
-                worker_start("plugin.$firm.$name.$process_name", $config);
+                if ($config['enable'] ?? false) {
+                    worker_start("plugin.$firm.$name.$process_name", $config);
+                }
             }
         }
     }
