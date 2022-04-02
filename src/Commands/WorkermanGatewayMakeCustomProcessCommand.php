@@ -38,7 +38,8 @@ class WorkermanGatewayMakeCustomProcessCommand extends GeneratorCommand
 
             $path = trim($path, '/');
 
-            return sprintf('%s/%s/%s.php',
+            return sprintf(
+                '%s/%s/%s.php',
                 $this->laravel['path.base'],
                 $path,
                 $filename

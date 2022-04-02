@@ -16,7 +16,8 @@ class WorkermanGatewayWorkerServiceProvider extends ServiceProvider
         ], 'laravel-octane-workerman');
 
         $this->mergeConfigFrom(
-            $configPath, 'workerman'
+            $configPath,
+            'workerman'
         );
 
         if (!config('octane.gatewayworker')) {

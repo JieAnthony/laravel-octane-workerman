@@ -75,13 +75,6 @@ php artisan workerman:gateway status
 php artisan workerman:gateway-make-sockets Sockets
 php artisan workerman:gateway-make-events Events
 php artisan workerman:gateway-make-custom-process CustomProcess
-
-php artisan workerman:gateway-http --port=9502 --host=0.0.0.0 start
-php artisan workerman:gateway-http --port=9502 --host=0.0.0.0 daemon
-php artisan workerman:gateway-http start
-php artisan workerman:gateway-http daemon
-php artisan workerman:gateway-http reload
-php artisan workerman:gateway-http stop
 ```
 
 ## Documentation

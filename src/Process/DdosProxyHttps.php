@@ -12,10 +12,10 @@ $worker->onConnect = function ($con) {
 $worker = new Worker('tcp://0.0.0.0:443');
 $worker->count = 8;
 $worker->onConnect = function ($con) {
-   $rcon = new AsyncTcpConnection('tcp://内网ip:443');
-   $rcon->pipe($con);
-   $con->pipe($rcon);
-   $rcon->connect();
+    $rcon = new AsyncTcpConnection('tcp://内网ip:443');
+    $rcon->pipe($con);
+    $con->pipe($rcon);
+    $rcon->connect();
 };
 
 

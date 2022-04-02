@@ -76,8 +76,8 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
 
         if (!$this->isDaemon()) {
             return $this->runServer(
-                $inspector->startServer(), 
-                $inspector, 
+                $inspector->startServer(),
+                $inspector,
                 'workerman'
             );
         }
@@ -113,6 +113,11 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
         $inspector->stopServer();
 
         return Command::SUCCESS;
+    }
+
+    public function stopServer()
+    {
+        $this->serverStop(app(ServerProcessInspector::class));
     }
 
     protected function writeServerStateFile(ServerStateFile $serverStateFile, bool $daemon = false)
@@ -181,7 +186,7 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
             $this->serverReload($inspector);
             return;
         }
-        
+
         $this->serverStop($inspector);
     }
 }
