@@ -2,7 +2,7 @@
 
 if (!function_exists('webman_config')) {
     /**
-     * @return int
+     * @return array|mixed|null
      */
     function webman_config(string $key = null, $default = null)
     {
@@ -44,6 +44,21 @@ if (!function_exists('create_laravel_application_for_worker')) {
         $worker->app = (new \Laravel\Octane\ApplicationFactory($_SERVER['APP_BASE_PATH']))->createApplication();
 
         \JieAnthony\LaravelOctaneWorkerman\WebmanConfig::load($worker->app->configPath());
+
+        webman_bootstrap($worker);
+    }
+}
+
+if (!function_exists('webman_bootstrap')) {
+    /**
+     * 在 worker 内部引入 laravel 与 webman_config
+     *
+     * @param  \Workerman\Worker|\Laravel\Octane\Worker $worker
+     * @return void
+     */
+    function webman_bootstrap($worker)
+    {
+        require_once __DIR__.'/webman_bootstrap.php';
     }
 }
 

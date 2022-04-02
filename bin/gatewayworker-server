@@ -155,6 +155,8 @@ if ($httpConfig['enable']) {
                 new ApplicationFactory($basePath), $workermanClient
             )))->boot();
 
+            webman_bootstrap($worker);
+
         } catch (Throwable $e) {
             $connection->send($e->getMessage());
 
