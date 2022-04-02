@@ -49,6 +49,15 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "post-package-install": [
+            "JieAnthony\\LaravelOctaneWorkerman\\WebmanPlugin::install"
+        ],
+        "post-package-update": [
+            "JieAnthony\\LaravelOctaneWorkerman\\WebmanPlugin::install"
+        ],
+        "pre-package-uninstall": [
+            "JieAnthony\\LaravelOctaneWorkerman\\WebmanPlugin::uninstall"
+        ],
         "check-style": "vendor/bin/php-cs-fixer fix --using-cache=no --config=.php_cs --diff --dry-run --ansi",
         "fix-style": "vendor/bin/php-cs-fixer fix --using-cache=no --config=.php_cs --ansi"
     }
