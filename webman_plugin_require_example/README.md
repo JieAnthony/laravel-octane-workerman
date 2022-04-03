@@ -37,17 +37,9 @@ composer require webman/push -vvv
 - 将 `Webman\Request` 替换为 `Illuminate\Http\Request`
 - 将 `Webman\Route` 替换为 `Illuminate\Routing\Router`
 - 使用 laravel 的路由分组包含路由
-```php
-// use support\Request;
-// use Webman\Route;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
-
-app('router')->middleware(['web'])->group(function (Router $route) {
-    // ...
-});
-```
 - 替换 `Route::` 调用为 `$route->`
+
+示例：
 ```php
 // use support\Request;
 // use Webman\Route;
