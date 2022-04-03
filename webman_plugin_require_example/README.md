@@ -10,7 +10,7 @@ https://github.com/mouyong/laravel-octane-workerman/tree/gatewayworker/webman_pl
 
 在项目的 `composer.json` 添加如下内容。可参考 `laravel-octane-workerman` 的 `composer.json` 中，`scripts` 配置
 
-```json
+```js
 {
     // ...
     "scripts": {
