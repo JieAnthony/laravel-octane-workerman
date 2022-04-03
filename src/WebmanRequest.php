@@ -4,7 +4,9 @@ namespace JieAnthony\LaravelOctaneWorkerman;
 
 class WebmanRequest
 {
-    use WorkerTrait;
+    use WorkerTrait {
+        __call as workerCall;
+    }
 
     public function getRealIp($safe_mode = true)
     {
@@ -37,5 +39,14 @@ class WebmanRequest
         }
 
         return false;
+    }
+
+    public function __call($method, $args)
+    {
+        if (method_exists(\request(), $method)) {
+            return \request()->$method(...$args);
+        }
+
+        return static::workerCall($method, $args);
     }
 }

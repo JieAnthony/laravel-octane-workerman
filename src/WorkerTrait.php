@@ -12,6 +12,8 @@ trait WorkerTrait
 
     protected static $workermanProtocolsHttpRequest = null;
 
+    protected static $properties = [];
+
     protected static $_instance = null;
 
     public static function bindConnection(...$property)
@@ -27,21 +29,16 @@ trait WorkerTrait
 
         if ($name) {
             static::$$name = $prop;
+            static::$properties[] = $name;
         }
     }
-    
+
     public function __call($method, $args)
     {
-        if (method_exists(\request(), $method)) {
-            return \request()->$method(...$args);
-        }
-
-        if (method_exists(static::$connection, $method)) {
-            return static::$connection->$method(...$args);
-        }
-
-        if (method_exists(static::$worker, $method)) {
-            return static::$connection->$method(...$args);
+        foreach (static::$properties as $property) {
+            if (static::$$property && method_exists(static::$$property, $method)) {
+                return static::$$property->$method(...$args);
+            }
         }
 
         throw new \Exception("\\request() not found method {$method}, please contact my24251325@gmail.com");
