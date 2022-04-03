@@ -2,6 +2,8 @@
 
 namespace JieAnthony\LaravelOctaneWorkerman;
 
+use Illuminate\Support\Arr;
+
 trait WorkerTrait
 {
     protected static $_bindInstance = [];
@@ -15,8 +17,20 @@ trait WorkerTrait
         }
     }
 
-    public static function allBindInstance()
+    public static function getBindInstance($name = null)
     {
+        if (str_contains($name, '.')) {
+            $instance = Arr::get(static::$_bindInstance, $name);
+
+            if ($instance) {
+                return $instance;
+            }
+        }
+
+        if ($name && array_key_exists($name, static::$_bindInstance)) {
+            return static::$_bindInstance[$name];
+        }
+
         return static::$_bindInstance;
     }
 
