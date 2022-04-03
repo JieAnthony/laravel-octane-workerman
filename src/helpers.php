@@ -129,6 +129,7 @@ if (!function_exists('create_laravel_application_for_worker')) {
         $worker->app = (new \Laravel\Octane\ApplicationFactory($_SERVER['APP_BASE_PATH']))->createApplication();
 
         webman_bootstrap($worker);
+        webman_route_load();
     }
 }
 
@@ -153,13 +154,13 @@ if (!function_exists('webman_route_load')) {
      *
      * @return void
      */
-    function webman_route_load(string $pluginName, $autoload = false)
+    function webman_route_load(?string $pluginName = null, $autoload = true)
     {
         defined('LARAVEL_ROUTE_START') or define('LARAVEL_ROUTE_START', microtime());
 
         foreach (webman_config('plugin', []) as $firm => $projects) {
             foreach ($projects as $name => $project) {
-                if ($name !== $pluginName) {
+                if ($pluginName && $name !== $pluginName) {
                     continue;
                 }
                 
