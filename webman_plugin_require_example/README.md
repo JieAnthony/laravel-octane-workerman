@@ -40,7 +40,7 @@ composer require webman/push -vvv
 ### 1. 路由适配
 
 - 修改插件的 `route.php` 文件
-- 将 `Webman\Request` 替换为 `Illuminate\Http\Request`
+- 将 `Webman\Request` 替换为 `JieAnthony\LaravelOctaneWorkerman\WebmanRequest as Request`
 - 将 `Webman\Route` 替换为 `Illuminate\Routing\Router`
 - 使用 laravel 的路由分组包含路由
 - 替换 `Route::` 调用为 `$route->`
@@ -49,10 +49,9 @@ composer require webman/push -vvv
 ```php
 // use support\Request;
 // use Webman\Route;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Router;
+use JieAnthony\LaravelOctaneWorkerman\WebmanRequest as Request;
 
-app('router')->middleware(['web'])->group(function (Router $route) {
+app('router')->middleware(['web'])->group(function (\Illuminate\Routing\Router $route) {
     /**
      * 推送js客户端文件
      */

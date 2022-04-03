@@ -97,7 +97,6 @@ if ($config['business']['enable']) {
     $business->count = $config['business']['count'];
     $business->registerAddress = $config['business']['registerAddress'];
     $business->onWorkerStart = $config['business']['onWorkerStart'] ?? function (BusinessWorker $worker) {
-        create_laravel_application_for_worker($worker);
     };
     $business->onWorkerStop = $config['business']['onWorkerStop'] ?? function (BusinessWorker $businessWorker) {
     };
@@ -155,6 +154,7 @@ if ($httpConfig['enable']) {
         $basePath,
         $publicPath,
         $octaneConfig,
+        $workerman,
     ) {
         static $request_count = 0;
 
@@ -164,7 +164,8 @@ if ($httpConfig['enable']) {
                 new ApplicationFactory($basePath), $workermanClient
             )))->boot();
 
-            webman_bootstrap($worker);
+            request_bind_connection($workerman, $worker, $connection, $workermanRequest);
+            response_bind_connection($workerman, $worker, $connection);
 
         } catch (Throwable $e) {
             $connection->send($e->getMessage());

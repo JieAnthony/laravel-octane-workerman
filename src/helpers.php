@@ -1,5 +1,7 @@
 <?php
 
+use JieAnthony\LaravelOctaneWorkerman\WebmanRequest;
+use JieAnthony\LaravelOctaneWorkerman\WebmanResponse;
 use Symfony\Component\VarDumper\VarDumper;
 
 require_once __DIR__.'/webman_helpers.php';
@@ -128,15 +130,32 @@ if (!function_exists('create_laravel_application_for_worker')) {
 
         $worker->app = (new \Laravel\Octane\ApplicationFactory($_SERVER['APP_BASE_PATH']))->createApplication();
 
-        webman_bootstrap($worker);
         webman_route_load();
+    }
+}
+
+if (!function_exists('request_bind_connection')) {
+    /**
+     * @return void
+     */
+    function request_bind_connection()
+    {
+        \JieAnthony\LaravelOctaneWorkerman\WebmanRequest::bindConnection(...func_get_args());
+    }
+}
+
+if (!function_exists('response_bind_connection')) {
+    /**
+     * @return void
+     */
+    function response_bind_connection()
+    {
+        \JieAnthony\LaravelOctaneWorkerman\WebmanResponse::bindConnection(...func_get_args());
     }
 }
 
 if (!function_exists('webman_bootstrap')) {
     /**
-     * 在 worker 内部引入 laravel 与 webman_config
-     *
      * @param  \Workerman\Worker|\Laravel\Octane\Worker|null $worker
      * @return void
      */
@@ -150,8 +169,6 @@ if (!function_exists('webman_bootstrap')) {
 
 if (!function_exists('webman_route_load')) {
     /**
-     * 在 worker 内部引入 laravel 与 webman_config
-     *
      * @return void
      */
     function webman_route_load(?string $pluginName = null, $autoload = true)
