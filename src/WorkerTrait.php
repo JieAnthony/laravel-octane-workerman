@@ -4,23 +4,20 @@ namespace JieAnthony\LaravelOctaneWorkerman;
 
 trait WorkerTrait
 {
-    protected static $workermanWorker = null;
-
-    protected static $laravelOctaneWorker = null;
-
-    protected static $workermanConnectionTcpConnection = null;
-
-    protected static $workermanProtocolsHttpRequest = null;
-
-    protected static $properties = [];
+    protected static $_bindInstance = [];
 
     protected static $_instance = null;
 
-    public static function bindConnection(...$property)
+    public static function bindInstance(...$property)
     {
         foreach ($property as $prop) {
             static::setProp($prop);
         }
+    }
+
+    public static function allBindInstance()
+    {
+        return static::$_bindInstance;
     }
 
     protected static function setProp($prop)
@@ -28,16 +25,15 @@ trait WorkerTrait
         $name = get_variable_name($prop);
 
         if ($name) {
-            static::$$name = $prop;
-            static::$properties[] = $name;
+            static::$_bindInstance[$name] = $prop;
         }
     }
 
     public function __call($method, $args)
     {
-        foreach (static::$properties as $property) {
-            if (static::$$property && method_exists(static::$$property, $method)) {
-                return static::$$property->$method(...$args);
+        foreach (static::$_bindInstance as $name => $instance) {
+            if (method_exists($instance, $method)) {
+                return $instance->$method(...$args);
             }
         }
 

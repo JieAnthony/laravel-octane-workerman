@@ -174,7 +174,7 @@ if (!function_exists('request_bind_connection')) {
      */
     function request_bind_connection()
     {
-        \JieAnthony\LaravelOctaneWorkerman\WebmanRequest::bindConnection(...func_get_args());
+        \JieAnthony\LaravelOctaneWorkerman\WebmanRequest::bindInstance(...func_get_args());
     }
 }
 
@@ -184,7 +184,7 @@ if (!function_exists('response_bind_connection')) {
      */
     function response_bind_connection()
     {
-        \JieAnthony\LaravelOctaneWorkerman\WebmanResponse::bindConnection(...func_get_args());
+        \JieAnthony\LaravelOctaneWorkerman\WebmanResponse::bindInstance(...func_get_args());
     }
 }
 
