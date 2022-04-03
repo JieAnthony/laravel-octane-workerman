@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\VarDumper\VarDumper;
+
 require_once __DIR__.'/webman_helpers.php';
 
 if (!function_exists('is_phar')) {
@@ -19,6 +21,16 @@ if (!function_exists('app_path')) {
     function app_path()
     {
         return base_path() . DIRECTORY_SEPARATOR . 'app';
+    }
+}
+
+if (!function_exists('config_path')) {
+    /**
+     * @return string
+     */
+    function config_path()
+    {
+        return base_path() . DIRECTORY_SEPARATOR . 'config';
     }
 }
 
@@ -88,12 +100,15 @@ if (!function_exists('cpu_count')) {
         if (\DIRECTORY_SEPARATOR === '\\') {
             return 1;
         }
+        
         if (strtolower(PHP_OS) === 'darwin') {
             $count = shell_exec('sysctl -n machdep.cpu.core_count');
         } else {
             $count = shell_exec('nproc');
         }
+
         $count = (int)$count > 0 ? (int)$count : 4;
+        
         return $count;
     }
 }
@@ -102,16 +117,16 @@ if (!function_exists('create_laravel_application_for_worker')) {
     /**
      * 在 worker 内部引入 laravel 与 webman_config
      *
-     * @param  \Workerman\Worker $worker
+     * @param  \Workerman\Worker|\Laravel\Octane\Worker|null $worker
      * @return void
      */
-    function create_laravel_application_for_worker(\Workerman\Worker $worker)
+    function create_laravel_application_for_worker($worker)
     {
+        defined('LARAVEL_WORKERMAN_START') or define('LARAVEL_WORKERMAN_START', microtime());
+
         require_once $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
 
         $worker->app = (new \Laravel\Octane\ApplicationFactory($_SERVER['APP_BASE_PATH']))->createApplication();
-
-        \JieAnthony\LaravelOctaneWorkerman\WebmanConfig::load($worker->app->configPath());
 
         webman_bootstrap($worker);
     }
@@ -121,12 +136,46 @@ if (!function_exists('webman_bootstrap')) {
     /**
      * 在 worker 内部引入 laravel 与 webman_config
      *
-     * @param  \Workerman\Worker|\Laravel\Octane\Worker $worker
+     * @param  \Workerman\Worker|\Laravel\Octane\Worker|null $worker
      * @return void
      */
-    function webman_bootstrap($worker)
+    function webman_bootstrap($worker = null)
     {
+        \JieAnthony\LaravelOctaneWorkerman\WebmanConfig::load(config_path(), ['container']);
+
         require_once __DIR__.'/webman_bootstrap.php';
+    }
+}
+
+if (!function_exists('webman_route_load')) {
+    /**
+     * 在 worker 内部引入 laravel 与 webman_config
+     *
+     * @return void
+     */
+    function webman_route_load(string $pluginName, $require = false)
+    {
+        defined('LARAVEL_ROUTE_START') or define('LARAVEL_ROUTE_START', microtime());
+
+        foreach (webman_config('plugin', []) as $firm => $projects) {
+            foreach ($projects as $name => $project) {
+                if ($name !== $pluginName) {
+                    continue;
+                }
+                
+                $file = config_path()."/plugin/$firm/$name/route.php";
+
+                if (!file_exists($file)) {
+                    continue;
+                }
+
+                if (!$require) {
+                    return $file;
+                }
+                
+                require_once $file;
+            }
+        }
     }
 }
 

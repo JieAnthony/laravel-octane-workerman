@@ -60,24 +60,16 @@ class WebmanPlugin
     }
 
     protected static function findHepler()
-    {
-        // Plugin.php in vendor
-        $file = __DIR__ . '/../../../../../support/helpers.php';
-        if (is_file($file)) {
-            require_once $file;
-        }
-
-        // Plugin.php in webman
+    {// Plugin.php in webman
         $file = __DIR__ . '/helpers.php';
         if (is_file($file)) {
             require_once $file;
         }
 
         // Plugin.php in webman
-        $file = __DIR__ . '/../../autoload.php';
+        $file = base_path() . '/vendor/autoload.php';
         if (is_file($file)) {
             require_once $file;
         }
     }
-
 }

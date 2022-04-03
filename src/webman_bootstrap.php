@@ -1,5 +1,7 @@
 <?php
 
+use JieAnthony\LaravelOctaneWorkerman\WebmanConfig;
+
 # autoload files
 foreach (config('autoload.files', []) as $file) {
     include_once $file;
@@ -11,6 +13,25 @@ foreach (webman_config('plugin', []) as $firm => $projects) {
             include_once $file;
         }
     }
+}
+
+$container = \Illuminate\Container\Container::getInstance();
+
+# webman route
+if (class_exists(\Webman\Route::class)) {
+    \Webman\Route::container($container);
+}
+
+# webman middleware
+if (class_exists(\Webman\Middleware::class)) {
+    \Webman\Middleware::container($container);
+    \Webman\Middleware::load(config('middleware', []));
+    foreach (webman_config('plugin', []) as $firm => $projects) {
+        foreach ($projects as $name => $project) {
+            \Webman\Middleware::load($project['middleware'] ?? []);
+        }
+    }
+    \Webman\Middleware::load(['__static__' => config('static.middleware', [])]);
 }
 
 # bootstrap
@@ -26,16 +47,4 @@ foreach (webman_config('plugin', []) as $firm => $projects) {
             $class_name::start($worker);
         }
     }
-}
-
-# webman middleware
-if (class_exists(\Webman\Middleware::class)) {
-    \Webman\Middleware::container(\Illuminate\Container\Container::getInstance());
-    \Webman\Middleware::load(config('middleware', []));
-    foreach (webman_config('plugin', []) as $firm => $projects) {
-        foreach ($projects as $name => $project) {
-            \Webman\Middleware::load($project['middleware'] ?? []);
-        }
-    }
-    \Webman\Middleware::load(['__static__' => config('static.middleware', [])]);
 }

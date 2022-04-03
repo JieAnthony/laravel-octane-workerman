@@ -34,6 +34,8 @@ date_default_timezone_set($data['state']['timezone']);
 // register 服务必须是text协议
 if ($config['register']['enable']) {
     $register = new Register("text://{$config['register']['host']}:{$config['register']['port']}");
+    create_laravel_application_for_worker($register);
+
     $register->name = $config['register']['name'];
     $register->onWorkerStart = function ($worker) {
         create_laravel_application_for_worker($worker);
@@ -43,6 +45,8 @@ if ($config['register']['enable']) {
 // gateway 进程, websocket 协议
 if ($config['gateway-websocket']['enable']) {
     $gatewayWebsocket = new Gateway("{$config['gateway-websocket']['protocol']}://{$config['gateway-websocket']['host']}:{$config['gateway-websocket']['port']}");
+    create_laravel_application_for_worker($gatewayWebsocket);
+
     $gatewayWebsocket->name = $config['gateway-websocket']['name'];
     $gatewayWebsocket->count = $config['gateway-websocket']['count'];
     $gatewayWebsocket->lanIp = $config['gateway-websocket']['lanIp'];
@@ -64,6 +68,8 @@ if ($config['gateway-websocket']['enable']) {
 // gateway 进程, tcp 协议
 if ($config['gateway-tcp']['enable']) {
     $gatewayTcp = new Gateway("{$config['gateway-tcp']['protocol']}://{$config['gateway-tcp']['host']}:{$config['gateway-tcp']['port']}");
+    create_laravel_application_for_worker($gatewayTcp);
+
     $gatewayTcp->name = $config['gateway-tcp']['name'];
     $gatewayTcp->count = $config['gateway-tcp']['count'];
     $gatewayTcp->lanIp = $config['gateway-tcp']['lanIp'];
@@ -85,6 +91,8 @@ if ($config['gateway-tcp']['enable']) {
 // bussinessWorker 进程
 if ($config['business']['enable']) {
     $business = new BusinessWorker("{$config['business']['protocol']}://{$config['business']['host']}:{$config['business']['port']}");
+    create_laravel_application_for_worker($business);
+
     $business->name = $config['business']['name'];
     $business->count = $config['business']['count'];
     $business->registerAddress = $config['business']['registerAddress'];
@@ -129,6 +137,7 @@ TcpConnection::$defaultMaxPackageSize = $httpConfig['max_package_size'] ?? 10 * 
 
 if ($httpConfig['enable']) {
     $workerman = new WorkermanWorker("http://{$data['state']['host']}:{$data['state']['port']}", $httpConfig['context'] ?? []);
+    create_laravel_application_for_worker($workerman);
 
     $workerman->count = $httpConfig['count'] ?: cpu_count() * 2;
     $workerman->name = $httpConfig['name'];
@@ -182,7 +191,7 @@ if ($httpConfig['enable']) {
 if (\DIRECTORY_SEPARATOR === '/') {
     $process = $config['process'] ?? [];
     foreach ($process as $process_name => $config) {
-        if ($config['enable'] ?? false) {
+        if ($config['enable'] ?? true) {
             worker_start($process_name, $config);
         }
     }
@@ -190,7 +199,7 @@ if (\DIRECTORY_SEPARATOR === '/') {
     foreach (webman_config('plugin') ?? [] as $firm => $projects) {
         foreach ($projects as $name => $project) {
             foreach ($project['process'] ?? [] as $process_name => $config) {
-                if ($config['enable'] ?? false) {
+                if ($config['enable'] ?? true) {
                     worker_start("plugin.$firm.$name.$process_name", $config);
                 }
             }
