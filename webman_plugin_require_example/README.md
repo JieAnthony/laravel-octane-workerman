@@ -1,3 +1,9 @@
+# 引入 webman/push 适配说明文档
+
+https://github.com/mouyong/laravel-octane-workerman/tree/gatewayworker/webman_plugin_require_example
+
+-------
+
 # 在 laravel 框架中引入 webman plugin
 
 ## 1. 添加插件安装脚本到项目中
