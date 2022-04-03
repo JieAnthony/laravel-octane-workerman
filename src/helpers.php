@@ -153,7 +153,7 @@ if (!function_exists('webman_route_load')) {
      *
      * @return void
      */
-    function webman_route_load(string $pluginName, $require = false)
+    function webman_route_load(string $pluginName, $autoload = false)
     {
         defined('LARAVEL_ROUTE_START') or define('LARAVEL_ROUTE_START', microtime());
 
@@ -169,7 +169,7 @@ if (!function_exists('webman_route_load')) {
                     continue;
                 }
 
-                if (!$require) {
+                if (!$autoload) {
                     return $file;
                 }
                 
