@@ -77,6 +77,10 @@ php artisan workerman:gateway-make-events Events
 php artisan workerman:gateway-make-custom-process CustomProcess
 ```
 
+### webman plugin useage
+
+* [webman plugin](webman_plugin_require_example/README.md)
+
 ## Documentation
 
 * [Workerman](https://www.workerman.net/doc/workerman/)
