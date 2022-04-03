@@ -32,7 +32,7 @@ class ServerProcessInspector
     }
 
     public function getServer($mode, array $args = [])
-    {        
+    {
         return $this->processFactory->createProcess([
             (new PhpExecutableFinder())->find(), 'gatewayworker-server', $mode, $this->serverStateFile->path(), ...$args,
         ], realpath(__DIR__ . '/../../bin'), ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1], null, null);
@@ -46,6 +46,8 @@ class ServerProcessInspector
     public function startServer()
     {
         if ($this->serverIsRunning()) {
+            $this->stopServer();
+
             return;
         }
 
@@ -70,11 +72,11 @@ class ServerProcessInspector
         }
 
         $server = $this->getServer('start');
-        
+
         $server->run();
 
         $pid = file_get_contents(config('workerman.gatewayworker.http.pid_file'));
-        
+
         $this->writeProcessId($pid);
 
         return $server;
@@ -97,11 +99,11 @@ class ServerProcessInspector
      */
     public function stopServer(): void
     {
-       $this->getServer('stop')->start();
+        $this->getServer('stop')->start();
 
-       $this->serverStateFile->delete();
-       
-       Worker::stopAll();
+        $this->serverStateFile->delete();
+
+        Worker::stopAll();
     }
 
     /**

@@ -24,6 +24,8 @@ Start the laravel project through `gatewayworker` to make the development of lar
 ![image](https://user-images.githubusercontent.com/10336437/160744127-979c1531-858e-4869-9ccf-a3b02e582091.png)
 
 ![image](https://user-images.githubusercontent.com/10336437/160744093-f6c4020a-fbb9-4bf7-a420-0078f354c53c.png)
+
+![image](https://user-images.githubusercontent.com/10336437/161367556-01f4cdb5-c51f-4afa-9875-63ca09d83dd7.jpg)
 </details>
 
 ## Installing
@@ -73,14 +75,11 @@ php artisan workerman:gateway status
 php artisan workerman:gateway-make-sockets Sockets
 php artisan workerman:gateway-make-events Events
 php artisan workerman:gateway-make-custom-process CustomProcess
-
-php artisan workerman:gateway-http --port=9502 --host=0.0.0.0 start
-php artisan workerman:gateway-http --port=9502 --host=0.0.0.0 daemon
-php artisan workerman:gateway-http start
-php artisan workerman:gateway-http daemon
-php artisan workerman:gateway-http reload
-php artisan workerman:gateway-http stop
 ```
+
+### webman plugin useage
+
+* [webman plugin](webman_plugin_require_example/README.md)
 
 ## Documentation
 

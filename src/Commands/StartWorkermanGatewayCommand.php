@@ -8,8 +8,6 @@ use Laravel\Octane\Commands\Concerns\InteractsWithServers;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\ServerProcessInspector;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\ServerStateFile;
 use Symfony\Component\Console\Command\SignalableCommandInterface;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\Process;
 
 class StartWorkermanGatewayCommand extends Command implements SignalableCommandInterface
 {
@@ -78,8 +76,8 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
 
         if (!$this->isDaemon()) {
             return $this->runServer(
-                $inspector->startServer(), 
-                $inspector, 
+                $inspector->startServer(),
+                $inspector,
                 'workerman'
             );
         }
@@ -115,6 +113,11 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
         $inspector->stopServer();
 
         return Command::SUCCESS;
+    }
+
+    public function stopServer()
+    {
+        $this->serverStop(app(ServerProcessInspector::class));
     }
 
     protected function writeServerStateFile(ServerStateFile $serverStateFile, bool $daemon = false)
@@ -183,7 +186,7 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
             $this->serverReload($inspector);
             return;
         }
-        
+
         $this->serverStop($inspector);
     }
 }
