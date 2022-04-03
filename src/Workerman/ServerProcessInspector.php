@@ -89,7 +89,7 @@ class ServerProcessInspector
      */
     public function reloadServer()
     {
-        return $this->getServer('reload')->start();
+        return $this->getServer('reload')->run();
     }
 
     /**
@@ -99,7 +99,7 @@ class ServerProcessInspector
      */
     public function stopServer(): void
     {
-        $this->getServer('stop')->start();
+        $this->getServer('stop')->run();
 
         $this->serverStateFile->delete();
 
