@@ -38,12 +38,22 @@ composer require webman/push -vvv
 - 将 `Webman\Route` 替换为 `Illuminate\Routing\Router`
 - 使用 laravel 的路由分组包含路由
 ```php
+// use support\Request;
+// use Webman\Route;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
+
 app('router')->middleware(['web'])->group(function (Router $route) {
     // ...
 });
 ```
 - 替换 `Route::` 调用为 `$route->`
 ```php
+// use support\Request;
+// use Webman\Route;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
+
 app('router')->middleware(['web'])->group(function (Router $route) {
     /**
      * 推送js客户端文件
@@ -59,3 +69,7 @@ app('router')->middleware(['web'])->group(function (Router $route) {
     });
 });
 ```
+- 手动执行 `composer dump-autoload`，让项目自动自行 `@php artisan package:discover --ansi` 命令
+```bash
+composer du # 简写
+````
