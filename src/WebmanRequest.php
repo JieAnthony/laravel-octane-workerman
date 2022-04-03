@@ -4,39 +4,8 @@ namespace JieAnthony\LaravelOctaneWorkerman;
 
 class WebmanRequest
 {
-    protected static $workerman = null;
+    use WorkerTrait;
 
-    protected static $worker = null;
-
-    protected static $connection = null;
-    
-    protected static $workermanRequest = null;
-
-    public static function bindConnection($workerman = null, $worker = null, $connection = null, $workermanRequest)
-    {
-        static::$workerman = $workerman ?? static::$workerman;
-        static::$worker = $worker ?? static::$worker;
-        static::$connection = $connection ?? static::$connection;
-        static::$workermanRequest = $workermanRequest ?? static::$workermanRequest;
-    }
-    
-    public function __call($method, $args)
-    {
-        if (method_exists(\request(), $method)) {
-            return \request()->$method(...$args);
-        }
-
-        if (method_exists(static::$connection, $method)) {
-            return static::$connection->$method(...$args);
-        }
-
-        if (method_exists(static::$worker, $method)) {
-            return static::$connection->$method(...$args);
-        }
-
-        throw new \Exception("\\request() not found method {$method}, please contact my24251325@gmail.com");
-    }
-    
     public function getRealIp($safe_mode = true)
     {
         $remote_ip = $this->getRemoteIp();

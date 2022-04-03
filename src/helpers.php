@@ -1,10 +1,44 @@
 <?php
 
-use JieAnthony\LaravelOctaneWorkerman\WebmanRequest;
-use JieAnthony\LaravelOctaneWorkerman\WebmanResponse;
-use Symfony\Component\VarDumper\VarDumper;
+require_once __DIR__ . '/webman_helpers.php';
 
-require_once __DIR__.'/webman_helpers.php';
+if (!function_exists('get_variable_name')) {
+    function get_variable_name(&$var, $scope = null)
+    {
+        $scope = $scope == null ? $GLOBALS : $scope; // 如果没有范围则在globals中找寻
+
+        // 因有可能有相同值的变量,因此先将当前变量的值保存到一个临时变量中,然后再对原变量赋唯一值,以便查找出变量的名称,找到名字后,将临时变量的值重新赋值到原变量
+        $tmp = $var;
+
+        $var = 'tmp_value_' . mt_rand();
+
+        $name = array_search($var, $scope, true); // 根据值查找变量名称
+
+        $var = $tmp;
+        if (!$name) {
+            return lcfirst(get_variable_class_name_of_calss($var));
+        }
+
+        unset($tmp);
+
+        return $name ?? null;
+    }
+}
+
+if (!function_exists('get_variable_name_of_class')) {
+    function get_variable_class_name_of_calss($var)
+    {
+        if (is_scalar($var)) {
+            return null;
+        }
+
+        $class = get_class($var);
+
+        $varName = str_replace('\\', '', $class);
+
+        return lcfirst($varName);
+    }
+}
 
 if (!function_exists('is_phar')) {
     /**
@@ -102,7 +136,7 @@ if (!function_exists('cpu_count')) {
         if (\DIRECTORY_SEPARATOR === '\\') {
             return 1;
         }
-        
+
         if (strtolower(PHP_OS) === 'darwin') {
             $count = shell_exec('sysctl -n machdep.cpu.core_count');
         } else {
@@ -110,7 +144,7 @@ if (!function_exists('cpu_count')) {
         }
 
         $count = (int)$count > 0 ? (int)$count : 4;
-        
+
         return $count;
     }
 }
@@ -163,7 +197,7 @@ if (!function_exists('webman_bootstrap')) {
     {
         \JieAnthony\LaravelOctaneWorkerman\WebmanConfig::load(config_path(), ['container']);
 
-        require_once __DIR__.'/webman_bootstrap.php';
+        require_once __DIR__ . '/webman_bootstrap.php';
     }
 }
 
@@ -180,8 +214,8 @@ if (!function_exists('webman_route_load')) {
                 if ($pluginName && $name !== $pluginName) {
                     continue;
                 }
-                
-                $file = config_path()."/plugin/$firm/$name/route.php";
+
+                $file = config_path() . "/plugin/$firm/$name/route.php";
 
                 if (!file_exists($file)) {
                     continue;
@@ -190,7 +224,7 @@ if (!function_exists('webman_route_load')) {
                 if (!$autoload) {
                     return $file;
                 }
-                
+
                 require_once $file;
             }
         }
