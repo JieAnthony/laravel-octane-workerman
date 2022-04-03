@@ -2,6 +2,9 @@
 
 namespace JieAnthony\LaravelOctaneWorkerman;
 
+/**
+ * \Illuminate\Http\Request|Workerman\Protocols\Http\Request|Workerman\Connection\TcpConnection|Laravel\Octane\Worker|Workerman\Worker
+ */
 class WebmanRequest
 {
     use WorkerTrait {
