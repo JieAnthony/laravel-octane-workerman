@@ -19,13 +19,13 @@ return [
             'max_package_size' => 10 * 1024 * 1024,
         ],
         'register' => [
-            'enable' => true,
+            'enable' => false,
             'name' => env('APP_NAME', 'laravel-octane-workerman') . ' RegisterWorker',
             'host' => '0.0.0.0',
             'port' => 7100,
         ],
         'gateway-websocket' => [
-            'enable' => true,
+            'enable' => false,
             'protocol' => 'websocket', // @see https://www.workerman.net/doc/gateway-worker/gateway.html
             'host' => '0.0.0.0',
             'port' => 7200,
@@ -46,7 +46,7 @@ return [
             // 'onClose' => [App\Sockets::class, 'onClose'],
         ],
         'gateway-tcp' => [
-            'enable' => true,
+            'enable' => false,
             'protocol' => 'tcp', // @see https://www.workerman.net/doc/gateway-worker/gateway.html
             'host' => '0.0.0.0',
             'port' => 7300,
@@ -67,7 +67,7 @@ return [
             // 'onClose' => [App\Sockets::class, 'onClose'],
         ],
         'business' => [
-            'enable' => true,
+            'enable' => false,
             'protocol' => 'http', // @see https://www.workerman.net/doc/gateway-worker/business-worker.html
             'host' => '0.0.0.0',
             'port' => 7400,
@@ -90,7 +90,7 @@ return [
                 'reloadable' => false,
             ],
             'ddos-proxy-http' => [
-                'enable' => true,
+                'enable' => false,
                 'handler' => JieAnthony\LaravelOctaneWorkerman\Process\DdosProxyHttp::class,
                 'listen' => 'tcp://0.0.0.0:7000',
                 'context' => null,
