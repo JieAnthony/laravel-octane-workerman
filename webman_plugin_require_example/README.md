@@ -1,3 +1,7 @@
+# 论坛
+
+访问地址 https://laravel-workerman-bbs.hecs.iwnweb.com/
+
 # 引入 webman/push 适配说明文档
 
 https://github.com/mouyong/laravel-octane-workerman/tree/gatewayworker/webman_plugin_require_example
@@ -10,7 +14,7 @@ https://github.com/mouyong/laravel-octane-workerman/tree/gatewayworker/webman_pl
 
 在项目的 `composer.json` 添加如下内容。可参考 `laravel-octane-workerman` 的 `composer.json` 中，`scripts` 配置
 
-```js
+```json
 {
     // ...
     "scripts": {
@@ -40,7 +44,7 @@ composer require webman/push -vvv
 ### 1. 路由适配
 
 - 修改插件的 `route.php` 文件
-- 将 `Webman\Request` 替换为 `JieAnthony\LaravelOctaneWorkerman\WebmanRequest as Request`
+- 将 `Webman\Request` 替换为 `Illuminate\Http\Request`
 - 将 `Webman\Route` 替换为 `Illuminate\Routing\Router`
 - 使用 laravel 的路由分组包含路由
 - 替换 `Route::` 调用为 `$route->`
@@ -49,9 +53,10 @@ composer require webman/push -vvv
 ```php
 // use support\Request;
 // use Webman\Route;
-use JieAnthony\LaravelOctaneWorkerman\WebmanRequest as Request;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 
-app('router')->middleware(['web'])->group(function (\Illuminate\Routing\Router $route) {
+app('router')->middleware(['web'])->group(function (Router $route) {
     /**
      * 推送js客户端文件
      */
