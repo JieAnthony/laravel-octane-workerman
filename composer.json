@@ -25,7 +25,7 @@
         "friendsofphp/php-cs-fixer": "^2.15"
     },
     "bin": [
-        "bin/workerman-server"
+        "bin/gatewayworker-server"
     ],
     "autoload": {
         "files": [
