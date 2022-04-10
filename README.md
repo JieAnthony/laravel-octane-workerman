@@ -1,6 +1,10 @@
 Laravel Octane Workerman
 ---
 
+## Discussions 
+
+访问地址 https://laravel-workerman-bbs.hecs.iwnweb.com/
+
 ## Todos
 
 - [  ] Support Workerman v5
