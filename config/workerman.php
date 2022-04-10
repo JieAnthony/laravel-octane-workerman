@@ -85,7 +85,7 @@ return [
         ],
         'process' => [
             'database-heartbeat' => [
-                'enable' => true,
+                'enable' => false,
                 'handler' => JieAnthony\LaravelOctaneWorkerman\Process\DatabaseHeartbeat::class,
                 'reloadable' => false,
             ],
