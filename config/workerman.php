@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'zend' => [
+        // ignore args for call of \Throwable::getTrace(), must be set true.
+        // used for ini_set('zend.exception_ignore_args', true);
+        'exception_ignore_args' => true,
+    ],
     'gatewayworker' => [
         'http' => [
             'enable' => true,
