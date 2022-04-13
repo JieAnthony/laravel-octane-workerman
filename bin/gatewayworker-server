@@ -17,6 +17,10 @@ use GatewayWorker\BusinessWorker;
 ini_set('display_errors', 'on');
 error_reporting(E_ALL);
 
+// ignore args for \Throwable::getTrace(), must be set true.
+// used for ini_set('zend.exception_ignore_args', true);
+ini_set('zend.exception_ignore_args', 'on');
+
 $basePath = require $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
 
 $data = json_decode(file_get_contents($_SERVER['argv'][2]), true);
