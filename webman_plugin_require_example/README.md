@@ -1,6 +1,6 @@
 # 论坛
 
-访问地址 https://laravel-workerman-bbs.hecs.iwnweb.com/
+访问地址 https://laravel-workerman.iwnweb.com/
 
 # 引入 webman/push 适配说明文档
 
