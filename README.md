@@ -3,7 +3,7 @@ Laravel Octane Workerman
 
 ## Discussions 
 
-访问地址 https://laravel-workerman-bbs.hecs.iwnweb.com/
+访问地址 https://laravel-workerman.iwnweb.com/
 
 ## Todos
 
