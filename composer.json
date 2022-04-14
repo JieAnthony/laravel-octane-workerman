@@ -11,6 +11,11 @@
             "email": "my24251325@gmail.com"
         }
     ],
+    "support": {
+        "source": "https://github.com/mouyong/laravel-octane-workerman",
+        "homepage": "https://laravel-workerman.iwnweb.com",
+        "issues": "https://laravel-workerman.iwnweb.com"
+    },
     "require": {
         "php": "^8.0",
         "ext-json": "*",
