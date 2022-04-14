@@ -7,7 +7,7 @@ Laravel Octane Workerman
 
 ## Todos
 
-- [  ] Support Workerman v5
+- [ ] Support Workerman v5
 - [x] add make Events command
 - [x] add make Socket Command
 - [x] add make CustomProcess command
