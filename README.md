@@ -3,11 +3,11 @@ Laravel Octane Workerman
 
 ## Discussions 
 
-访问地址 https://laravel-workerman-bbs.hecs.iwnweb.com/
+访问地址 https://laravel-workerman.iwnweb.com/
 
 ## Todos
 
-- [  ] Support Workerman v5
+- [ ] Support Workerman v5
 - [x] add make Events command
 - [x] add make Socket Command
 - [x] add make CustomProcess command
