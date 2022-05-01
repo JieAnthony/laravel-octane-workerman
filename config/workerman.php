@@ -9,7 +9,7 @@ return [
             'transport' => 'tcp',
             'context' => [],
             'name' => env('APP_NAME', 'laravel-octane-workerman') . ' HttpWorker',
-            'count' => env('APP_ENV') === 'local' ? 1 : cpu_count() * 2,
+            'count' => env('APP_ENV') === 'local' ? 2 : cpu_count() * 2,
             'user' => '',
             'group' => '',
             'reuse_port' => true,
@@ -95,31 +95,31 @@ return [
                 'listen' => 'tcp://0.0.0.0:7000',
                 'context' => null,
             ],
-            // 'monitor' => [
-            //     'enable' => false,
-            //     'handler' => JieAnthony\LaravelOctaneWorkerman\Process\Monitor::class,
-            //     'reloadable' => false,
-            //     'constructor' => [
-            //         // Monitor these directories
-            //         'monitor_dir' => [
-            //             base_path() . '/app',
-            //             base_path() . '/bootstrap',
-            //             base_path() . '/config',
-            //             base_path() . '/database',
-            //             base_path() . '/public/**/*.php',
-            //             base_path() . '/resources/**/*.php',
-            //             base_path() . '/routes',
-            //             base_path() . '/composer.lock',
-            //             base_path() . '/.env',
-            //             base_path() . '/lang',
-            //             base_path() . '/process',
-            //         ],
-            //         // Files with these suffixes will be monitored
-            //         'monitor_extensions' => [
-            //             'php', 'html', 'htm', 'env'
-            //         ]
-            //     ]
-            // ],
+            'monitor' => [
+                'enable' => env('APP_ENV') === 'local' && env('APP_DEBUG') === true,
+                'handler' => JieAnthony\LaravelOctaneWorkerman\Process\Monitor::class,
+                'reloadable' => false,
+                'constructor' => [
+                    // Monitor these directories
+                    'monitor_dir' => [
+                        base_path() . '/app',
+                        base_path() . '/bootstrap',
+                        base_path() . '/config',
+                        base_path() . '/database',
+                        base_path() . '/public/**/*.php',
+                        base_path() . '/resources/**/*.php',
+                        base_path() . '/routes',
+                        base_path() . '/composer.lock',
+                        base_path() . '/.env',
+                        base_path() . '/lang',
+                        base_path() . '/process',
+                    ],
+                    // Files with these suffixes will be monitored
+                    'monitor_extensions' => [
+                        'php', 'html', 'htm', 'env'
+                    ]
+                ]
+            ],
         ],
     ],
 ];
