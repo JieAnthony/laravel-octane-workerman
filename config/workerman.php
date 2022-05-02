@@ -9,7 +9,7 @@ return [
             'transport' => 'tcp',
             'context' => [],
             'name' => env('APP_NAME', 'laravel-octane-workerman') . ' HttpWorker',
-            'count' => cpu_count() * 2,
+            'count' => env('APP_ENV') === 'local' ? cpu_count() * 2 : cpu_count() * 20,
             'user' => '',
             'group' => '',
             'reuse_port' => true,
