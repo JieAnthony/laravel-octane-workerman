@@ -1,14 +1,21 @@
 {
     "name": "jie-anthony/laravel-octane-workerman",
+    "description": "Start the laravel project through gatewayworker to make the development of laravel in the Internet of Things more convenient. Fetch and communicate with different gateways via API.",
+    "keywords": ["laravel-octane-workerman", "octane", "laravel", "workerman", "webman"],
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Anthony",
-            "email": "407968526@qq.com"
+            "email": "407968526@qq.com",
+            "homepage": "https://github.com/JieAnthony",
+            "role": "Creator & Developer"
         },
         {
             "name": "mouyong",
-            "email": "my24251325@gmail.com"
+            "email": "my24251325@gmail.com",
+            "homepage": "https://github.com/mouyong",
+            "role": "Creator & Developer"
         }
     ],
     "support": {
