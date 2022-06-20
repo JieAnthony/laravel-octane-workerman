@@ -164,7 +164,7 @@ if (!function_exists('create_laravel_application_for_worker')) {
 
         $worker->app = (new \Laravel\Octane\ApplicationFactory($_SERVER['APP_BASE_PATH']))->createApplication();
 
-        webman_route_load();
+        webman_bootstrap($worker);
     }
 }
 
@@ -198,6 +198,8 @@ if (!function_exists('webman_bootstrap')) {
         \JieAnthony\LaravelOctaneWorkerman\WebmanConfig::load(config_path(), ['container']);
 
         require_once __DIR__ . '/webman_bootstrap.php';
+
+        webman_route_load();
     }
 }
 

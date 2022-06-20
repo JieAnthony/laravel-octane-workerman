@@ -1,20 +1,30 @@
 {
     "name": "jie-anthony/laravel-octane-workerman",
+    "description": "Start the laravel project through gatewayworker to make the development of laravel in the Internet of Things more convenient. Fetch and communicate with different gateways via API.",
+    "keywords": ["laravel-octane-workerman", "octane", "laravel", "workerman", "webman"],
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Anthony",
-            "email": "407968526@qq.com"
+            "email": "407968526@qq.com",
+            "homepage": "https://github.com/JieAnthony",
+            "role": "Creator & Developer"
         },
         {
             "name": "mouyong",
-            "email": "my24251325@gmail.com"
+            "email": "my24251325@gmail.com",
+            "homepage": "https://github.com/mouyong",
+            "role": "Creator & Developer"
         }
     ],
+    "homepage": "https://laravel-workerman.iwnweb.com",
     "support": {
+        "email": "my24251325@gmail.com",
         "source": "https://github.com/mouyong/laravel-octane-workerman",
-        "homepage": "https://laravel-workerman.iwnweb.com",
-        "issues": "https://laravel-workerman.iwnweb.com"
+        "issues": "https://laravel-workerman.iwnweb.com",
+        "forum": "https://laravel-workerman.iwnweb.com",
+        "wiki": "https://laravel-workerman.iwnweb.com"
     },
     "require": {
         "php": "^8.0",
@@ -24,7 +34,8 @@
         "laravel/octane": "^1.0",
         "workerman/gateway-worker": "^3.0",
         "workerman/gatewayclient": "^3.0",
-        "workerman/workerman": "^4.0"
+        "workerman/workerman": "^4.0",
+        "workerman/psr7": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.15"

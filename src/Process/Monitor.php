@@ -98,7 +98,7 @@ class Monitor
                     continue;
                 }
                 $last_mtime = $file->getMTime();
-                echo $file . " update and reload\n";
+                // echo ltrim(str_replace(base_path(), '', $file), '/') . " update and reload\n";
                 // send SIGUSR1 signal to master process for reload
                 if (DIRECTORY_SEPARATOR === '/') {
                     posix_kill(posix_getppid(), SIGUSR1);

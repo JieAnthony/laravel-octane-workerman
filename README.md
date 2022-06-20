@@ -1,9 +1,13 @@
 Laravel Octane Workerman
 ---
 
+[![Latest Stable Version](http://poser.pugx.org/jie-anthony/laravel-octane-workerman/v)](https://packagist.org/packages/jie-anthony/laravel-octane-workerman) [![Total Downloads](http://poser.pugx.org/jie-anthony/laravel-octane-workerman/downloads)](https://packagist.org/packages/jie-anthony/laravel-octane-workerman) [![Latest Unstable Version](http://poser.pugx.org/jie-anthony/laravel-octane-workerman/v/unstable)](https://packagist.org/packages/jie-anthony/laravel-octane-workerman) [![License](http://poser.pugx.org/jie-anthony/laravel-octane-workerman/license)](https://packagist.org/packages/jie-anthony/laravel-octane-workerman) [![PHP Version Require](http://poser.pugx.org/jie-anthony/laravel-octane-workerman/require/php)](https://packagist.org/packages/jie-anthony/laravel-octane-workerman)
+
+
 ## Discussions 
 
 访问地址 https://laravel-workerman.iwnweb.com/
+
 
 ## Todos
 
@@ -12,6 +16,7 @@ Laravel Octane Workerman
 - [x] add make Socket Command
 - [x] add make CustomProcess command
 - [x] add global setRegisterAddress of API method
+
 
 ## Screenshot
 
@@ -44,6 +49,7 @@ $ composer require jie-anthony/laravel-octane-workerman:dev-gatewayworker -vvv
 $ composer require jie-anthony/laravel-octane-workerman -vvv
 ```
 
+
 ## Configuration
 
 ```shell
@@ -65,11 +71,10 @@ configuration edit in `config/workerman.php`
 
 mode options : ( start / daemon / stop )
 
+
 ## Useage
 
 ```shell
-php artisan workerman:gateway --port=9502 --host=0.0.0.0 start
-php artisan workerman:gateway --port=9502 --host=0.0.0.0 daemon
 php artisan workerman:gateway start
 php artisan workerman:gateway daemon
 php artisan workerman:gateway reload
@@ -85,9 +90,11 @@ php artisan workerman:gateway-make-custom-process CustomProcess
 
 * [webman plugin](webman_plugin_require_example/README.md)
 
+
 ## Documentation
 
 * [Workerman](https://www.workerman.net/doc/workerman/)
+
 
 ## websockets
 
@@ -103,6 +110,7 @@ location /ws {
     proxy_set_header Connection 'Upgrade';
 }
 ```
+
 
 ### Thanks
 

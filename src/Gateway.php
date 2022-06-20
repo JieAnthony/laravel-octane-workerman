@@ -7,7 +7,7 @@ class Gateway
     public static function resolveRegisterAddress(?string $registerAddress = null)
     {
         if (!$registerAddress) {
-            $registerConfig = config('octane.gatewayworker.register');
+            $registerConfig = config('octane.workerman.register');
             $registerAddress = sprintf("%s:%s", $registerConfig['host'], $registerConfig['port']);
         }
 

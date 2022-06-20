@@ -33,9 +33,28 @@ class ServerProcessInspector
 
     public function getServer($mode, array $args = [])
     {
-        return $this->processFactory->createProcess([
-            (new PhpExecutableFinder())->find(), 'gatewayworker-server', $mode, $this->serverStateFile->path(), ...$args,
-        ], realpath(__DIR__ . '/../../bin'), ['APP_BASE_PATH' => base_path(), 'LARAVEL_OCTANE' => 1], null, null);
+        $command = [
+            (new PhpExecutableFinder())->find(), 
+            'gatewayworker-server', 
+            $mode, 
+            $this->serverStateFile->path(), 
+            ...$args,
+        ];
+
+        $cwd = realpath(__DIR__ . '/../../bin');
+
+        $env = [
+            'APP_BASE_PATH' => base_path(),
+            'LARAVEL_OCTANE' => 1,
+        ];
+
+        return $this->processFactory->createProcess(
+            command: $command, 
+            cwd: $cwd, 
+            env: $env, 
+            input: null, 
+            timeout: null
+        );
     }
 
     /**
