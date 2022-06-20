@@ -34,7 +34,8 @@
         "laravel/octane": "^1.0",
         "workerman/gateway-worker": "^3.0",
         "workerman/gatewayclient": "^3.0",
-        "workerman/workerman": "dev-master|^4.0"
+        "workerman/workerman": "^4.0",
+        "workerman/psr7": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.15"

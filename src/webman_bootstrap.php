@@ -1,7 +1,5 @@
 <?php
 
-use JieAnthony\LaravelOctaneWorkerman\WebmanConfig;
-
 # autoload files
 foreach (config('autoload.files', []) as $file) {
     include_once $file;

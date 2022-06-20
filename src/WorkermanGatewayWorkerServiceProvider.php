@@ -20,9 +20,9 @@ class WorkermanGatewayWorkerServiceProvider extends ServiceProvider
             'workerman'
         );
 
-        if (!config('octane.gatewayworker')) {
+        if (!config('octane.workerman')) {
             config([
-                'octane.gatewayworker' => config('workerman.gatewayworker'),
+                'octane.workerman' => config('workerman'),
             ]);
         }
 

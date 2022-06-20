@@ -1,18 +1,8 @@
 #!/usr/bin/env php
 <?php
 
-use Laravel\Octane\ApplicationFactory;
-use Laravel\Octane\RequestContext;
-use Laravel\Octane\Worker;
-use JieAnthony\LaravelOctaneWorkerman\Workerman\WorkermanClient;
-use Workerman\Connection\ConnectionInterface;
 use Workerman\Worker as WorkermanWorker;
 use Workerman\Connection\TcpConnection;
-use Workerman\Protocols\Http\Request;
-
-use GatewayWorker\Register;
-use GatewayWorker\Gateway;
-use GatewayWorker\BusinessWorker;
 
 ini_set('display_errors', 'on');
 error_reporting(E_ALL);
@@ -21,103 +11,26 @@ error_reporting(E_ALL);
 // used for ini_set('zend.exception_ignore_args', true);
 ini_set('zend.exception_ignore_args', 'on');
 
-$basePath = require $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
+$basePath = require_once $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
 
-$data = json_decode(file_get_contents($_SERVER['argv'][2]), true);
-$daemon = $data['state']['daemon'];
-$publicPath = $data['state']['publicPath'];
-$octaneConfig = $data['state']['octaneConfig'];
-$config = $octaneConfig['gatewayworker'];
-$httpConfig = $config['http'];
+$serverStateFilepath = $_SERVER['argv'][2] ?? storage_path('logs/octane-server-state.json');
+$serverState = json_decode(file_get_contents($serverStateFilepath), true);
 
-define('MAX_REQUEST', (int)$data['state']['maxRequests']);
+define('MAX_REQUEST', (int) $serverState['state']['maxRequests']);
 
-date_default_timezone_set($data['state']['timezone']);
+date_default_timezone_set($serverState['state']['timezone']);
 
+$octaneConfig = $serverState['state']['octaneConfig'];
 
-// register 服务必须是text协议
-if ($config['register']['enable']) {
-    $register = new Register("text://{$config['register']['host']}:{$config['register']['port']}");
-    create_laravel_application_for_worker($register);
+$workermanConfig = $octaneConfig['workerman'];
 
-    $register->name = $config['register']['name'];
-    $register->onWorkerStart = function ($worker) {
-        create_laravel_application_for_worker($worker);
-    };
+if ($workermanConfig['memory_limit']) {
+    ini_set('memory_limit', $workermanConfig['memory_limit']);
 }
 
-// gateway 进程, websocket 协议
-if ($config['gateway-websocket']['enable']) {
-    $gatewayWebsocket = new Gateway("{$config['gateway-websocket']['protocol']}://{$config['gateway-websocket']['host']}:{$config['gateway-websocket']['port']}");
-    create_laravel_application_for_worker($gatewayWebsocket);
-
-    $gatewayWebsocket->name = $config['gateway-websocket']['name'];
-    $gatewayWebsocket->count = $config['gateway-websocket']['count'];
-    $gatewayWebsocket->lanIp = $config['gateway-websocket']['lanIp'];
-    $gatewayWebsocket->startPort = $config['gateway-websocket']['startPort'];
-    $gatewayWebsocket->pingInterval = $config['gateway-websocket']['pingInterval'];
-    $gatewayWebsocket->pingData = $config['gateway-websocket']['pingData'];
-    $gatewayWebsocket->registerAddress = $config['gateway-websocket']['registerAddress'];
-    $gatewayWebsocket->onWorkerStart = $config['gateway-websocket']['onWorkerStart'] ?? function ($worker) {
-        create_laravel_application_for_worker($worker);
-    };
-    $gatewayWebsocket->onWorkerStop = $config['gateway']['onWorkerStop'] ?? function () {
-    };
-    $gatewayWebsocket->onConnect = $config['gateway']['onConnect'] ?? function () {
-    };
-    $gatewayWebsocket->onClose = $config['gateway']['onClose'] ?? function () {
-    };
-}
-
-// gateway 进程, tcp 协议
-if ($config['gateway-tcp']['enable']) {
-    $gatewayTcp = new Gateway("{$config['gateway-tcp']['protocol']}://{$config['gateway-tcp']['host']}:{$config['gateway-tcp']['port']}");
-    create_laravel_application_for_worker($gatewayTcp);
-
-    $gatewayTcp->name = $config['gateway-tcp']['name'];
-    $gatewayTcp->count = $config['gateway-tcp']['count'];
-    $gatewayTcp->lanIp = $config['gateway-tcp']['lanIp'];
-    $gatewayTcp->startPort = $config['gateway-tcp']['startPort'];
-    $gatewayTcp->pingInterval = $config['gateway-tcp']['pingInterval'];
-    $gatewayTcp->pingData = $config['gateway-tcp']['pingData'];
-    $gatewayTcp->registerAddress = $config['gateway-tcp']['registerAddress'];
-    $gatewayTcp->onWorkerStart = $config['gateway-tcp']['onWorkerStart'] ?? function ($worker) {
-        create_laravel_application_for_worker($worker);
-    };
-    $gatewayTcp->onWorkerStop = $config['gateway']['onWorkerStop'] ?? function () {
-    };
-    $gatewayTcp->onConnect = $config['gateway']['onConnect'] ?? function () {
-    };
-    $gatewayTcp->onClose = $config['gateway']['onClose'] ?? function () {
-    };
-}
-
-// bussinessWorker 进程
-if ($config['business']['enable']) {
-    $business = new BusinessWorker("{$config['business']['protocol']}://{$config['business']['host']}:{$config['business']['port']}");
-    create_laravel_application_for_worker($business);
-
-    $business->name = $config['business']['name'];
-    $business->count = $config['business']['count'];
-    $business->registerAddress = $config['business']['registerAddress'];
-    $business->onWorkerStart = $config['business']['onWorkerStart'] ?? function (BusinessWorker $worker) {
-    };
-    $business->onWorkerStop = $config['business']['onWorkerStop'] ?? function (BusinessWorker $businessWorker) {
-    };
-
-    if (empty($config['business']['eventHandler']) && !class_exists('Events')) {
-        if (!class_exists('Events')) {
-            class Events {
-                public static function onMessage(string $client_id, string $recv_data)
-                {
-                    var_dump("client_id $client_id recv_data $recv_data");
-                }
-            };
-        }
-    }
-
-    $business->eventHandler = $config['business']['eventHandler'] ?? 'Events';
-}
+$httpConfig = $workermanConfig['http'];
+$httpConfig['maxPackageSize'] = $httpConfig['maxPackageSize'] ?? 10 * 1024 * 1024;
+$httpConfig['listen'] = $httpConfig['listen'] ?? "http://{$serverState['state']['host']}:{$serverState['state']['port']}";
 
 WorkermanWorker::$onMasterReload = function () {
     if (function_exists('opcache_get_status')) {
@@ -131,70 +44,19 @@ WorkermanWorker::$onMasterReload = function () {
     }
 };
 
+WorkermanWorker::$pidFile = $httpConfig['pidFile'];
+WorkermanWorker::$stdoutFile = $httpConfig['stdoutFile'];
+WorkermanWorker::$logFile = $httpConfig['logFile'];
+WorkermanWorker::$daemonize = $serverState['state']['daemon'];
 
-WorkermanWorker::$pidFile = $httpConfig['pid_file'];
-WorkermanWorker::$stdoutFile = $httpConfig['stdout_file'];
-WorkermanWorker::$logFile = $httpConfig['log_file'];
-WorkermanWorker::$daemonize = $daemon;
-TcpConnection::$defaultMaxPackageSize = $httpConfig['max_package_size'] ?? 10 * 1024 * 1024;
+TcpConnection::$defaultMaxPackageSize = $httpConfig['maxPackageSize'];
 
-if ($httpConfig['enable']) {
-    $workerman = new WorkermanWorker("http://{$data['state']['host']}:{$data['state']['port']}", $httpConfig['context'] ?? []);
-    create_laravel_application_for_worker($workerman);
-
-    $workerman->count = $httpConfig['count'] ?: cpu_count() * 2;
-    $workerman->name = $httpConfig['name'];
-    $workerman->user = $httpConfig['user'];
-    $workerman->group = $httpConfig['group'];
-    $workerman->reusePort = $httpConfig['reuse_port'];
-    $workerman->transport = $httpConfig['transport'];
-
-    $worker = null;
-    $workermanClient = new WorkermanClient;
-
-    $workerman->onMessage = function (ConnectionInterface $connection, Request $workermanRequest) use (
-        $worker,
-        $workermanClient,
-        $basePath,
-        $publicPath,
-        $octaneConfig,
-        $workerman,
-    ) {
-        static $request_count = 0;
-
-        try {
-            /** @var Worker $worker */
-            $worker = tap((new Worker(
-                new ApplicationFactory($basePath), $workermanClient
-            )))->boot();
-
-            request_bind_connection($workerman, $worker, $connection, $workermanRequest);
-            response_bind_connection($workerman, $worker, $connection);
-
-        } catch (Throwable $e) {
-            $connection->send($e->getMessage());
-
-            exit(1);
-        }
-
-        [$request, $context] = $workermanClient->marshalRequest(new RequestContext([
-            'workermanRequest' => $workermanRequest,
-            'connection' => $connection,
-            'publicPath' => $publicPath,
-            'octaneConfig' => $octaneConfig,
-        ]));
-
-        $worker->handle($request, $context);
-
-        if (++$request_count >= MAX_REQUEST) {
-            WorkermanWorker::stopAll();
-        }
-    };
-}
+require_once __DIR__."/createGatewayWorker.php";
+require_once __DIR__."/createHttpWorker.php";
 
 // Windows does not support custom processes.
 if (\DIRECTORY_SEPARATOR === '/') {
-    $process = $config['process'] ?? [];
+    $process = $workermanConfig['process'] ?? [];
     foreach ($process as $process_name => $config) {
         if ($config['enable'] ?? true) {
             worker_start($process_name, $config);

@@ -1,12 +1,14 @@
 <?php
 
-namespace JieAnthony\LaravelOctaneWorkerman\Commands\Concerns;
+namespace Laravel\Octane\Commands\Concerns;
 
+use Illuminate\Support\Str;
 use RuntimeException;
 use Symfony\Component\Process\Exception\ProcessSignaledException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
+use Workerman\Psr7\Response;
 use Workerman\Worker;
 
 trait InstallsWorkermanDependencies
@@ -18,29 +20,17 @@ trait InstallsWorkermanDependencies
      */
     protected function ensureWorkermanPackageIsInstalled()
     {
-        if (class_exists(Worker::class)) {
+        if (class_exists(Worker::class) && class_exists(Response::class)) {
             return true;
         }
 
-        if (!extension_loaded('pcntl')) {
-            $this->error("Please install pcntl extension. See http://doc3.workerman.net/appendices/install-extension.html\n");
+        if (! $this->confirm('Octane requires "workerman/workerman:^4.0" and "workerman/psr7:^1.4.4". Do you wish to install it as a dependency?')) {
+            $this->error('Octane requires "workerman/workerman" and and "workerman/psr7".');
 
             return false;
         }
 
-        if (!extension_loaded('posix')) {
-            $this->error("Please install posix extension. See http://doc3.workerman.net/appendices/install-extension.html\n");
-
-            return false;
-        }
-
-        if (!$this->confirm('laravel-octane-workerman requires "workerman/workerman". Do you wish to install it as a dependency?')) {
-            $this->error('laravel-octane-workerman requires "workerman/workerman"');
-
-            return false;
-        }
-
-        $command = $this->findComposer() . ' require workerman/workerman:^4.0 --with-all-dependencies';
+        $command = $this->findComposer().' require workerman/workerman:^4.0 workerman/psr7:^1.4.4 --with-all-dependencies';
 
         $process = Process::fromShellCommandline($command, null, null, null, null);
 
@@ -48,7 +38,7 @@ trait InstallsWorkermanDependencies
             try {
                 $process->setTty(true);
             } catch (RuntimeException $e) {
-                $this->output->writeln('Warning: ' . $e->getMessage());
+                $this->output->writeln('Warning: '.$e->getMessage());
             }
         }
 
@@ -72,14 +62,14 @@ trait InstallsWorkermanDependencies
      */
     protected function findComposer()
     {
-        $composerPath = getcwd() . '/composer.phar';
+        $composerPath = getcwd().'/composer.phar';
 
-        $phpPath = (new PhpExecutableFinder())->find();
+        $phpPath = (new PhpExecutableFinder)->find();
 
-        if (!file_exists($composerPath)) {
+        if (! file_exists($composerPath)) {
             $composerPath = (new ExecutableFinder())->find('composer');
         }
 
-        return '"' . $phpPath . '" ' . $composerPath;
+        return '"'.$phpPath.'" '.$composerPath;
     }
 }

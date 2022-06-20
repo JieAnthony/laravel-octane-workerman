@@ -8,7 +8,7 @@ class DdosProxyHttp
 {
     public function onConnect($con)
     {
-        $httpConfig = config('octane.gatewayworker.http');
+        $httpConfig = config('octane.workerman.http');
 
         $rcon = new AsyncTcpConnection("tcp://{$httpConfig['host']}:{$httpConfig['port']}");
 

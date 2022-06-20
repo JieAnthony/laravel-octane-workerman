@@ -11,8 +11,7 @@ use Symfony\Component\Console\Command\SignalableCommandInterface;
 
 class StartWorkermanGatewayCommand extends Command implements SignalableCommandInterface
 {
-    use Concerns\InstallsGatewayWorkerDependencies;
-    use InteractsWithServers;
+    use Concerns\InstallsGatewayWorkerDependencies, InteractsWithServers;
 
     /**
      * The command's signature.
@@ -41,11 +40,11 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
         }
 
         if (!$this->option('host')) {
-            $this->input->setOption('host', config('octane.gatewayworker.http.host'));
+            $this->input->setOption('host', config('octane.workerman.http.host'));
         }
 
         if (!$this->option('port')) {
-            $this->input->setOption('port', config('octane.gatewayworker.http.port'));
+            $this->input->setOption('port', config('octane.workerman.http.port'));
         }
 
         if (in_array($this->argument('mode'), ['start', 'daemon'])) {
