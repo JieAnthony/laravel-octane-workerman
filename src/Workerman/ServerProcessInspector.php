@@ -148,6 +148,8 @@ class ServerProcessInspector
 
         $server = $this->getServer('status', [$debug]);
 
-        return $server->run($callable);
+        $server->start();
+
+        return $server->waitUntil($callable);
     }
 }
