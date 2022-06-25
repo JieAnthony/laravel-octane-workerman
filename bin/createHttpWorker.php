@@ -27,19 +27,18 @@ $workermanClient = new WorkermanClient;
 
 $worker = null;
 
+/** @var Worker $worker */
+$worker = tap((new Worker(
+    new ApplicationFactory($basePath), $workermanClient
+)))->boot();
+
 Http::requestClass(ServerRequest::class);
 $workerman->onMessage = function(ConnectionInterface $connection, ServerRequest $psr7Request) use(
     $worker,
     $workermanClient,
-    $basePath,
     $workerman,
 ) {
     try {
-        /** @var Worker $worker */
-        $worker = tap((new Worker(
-            new ApplicationFactory($basePath), $workermanClient
-        )))->boot();
-
         // bind webman request and response
         request_bind_connection($workerman, $worker, $connection, $psr7Request);
         response_bind_connection($workerman, $worker, $connection);
