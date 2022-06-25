@@ -90,6 +90,12 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
     protected function serverStatus(ServerProcessInspector $inspector)
     {
         $inspector->getServerStatus(function ($type, $data) {
+            // master process already exit.
+            if (trim($data) === 'Press Ctrl+C to quit.') {
+                $this->info('The workerman server stopped');
+                return true;
+            }
+
             $this->output->write($data);
         }, $this->option('debug'));
 
