@@ -7,7 +7,6 @@ use GatewayWorker\BusinessWorker;
 // register 服务必须是text协议
 if ($workermanConfig['register']['enable']) {
     $register = new Register("text://{$workermanConfig['register']['host']}:{$workermanConfig['register']['port']}");
-    create_laravel_application_for_worker($register);
 
     $register->name = $workermanConfig['register']['name'];
     $register->onWorkerStart = function ($worker) {
@@ -38,7 +37,6 @@ if ($workermanConfig['gateway-websocket']['enable']) {
 // gateway 进程, tcp 协议
 if ($workermanConfig['gateway-tcp']['enable']) {
     $gatewayTcp = new Gateway("{$workermanConfig['gateway-tcp']['protocol']}://{$workermanConfig['gateway-tcp']['host']}:{$workermanConfig['gateway-tcp']['port']}");
-    create_laravel_application_for_worker($gatewayTcp);
 
     $gatewayTcp->name = $workermanConfig['gateway-tcp']['name'];
     $gatewayTcp->count = $workermanConfig['gateway-tcp']['count'];
@@ -60,7 +58,6 @@ if ($workermanConfig['gateway-tcp']['enable']) {
 // bussinessWorker 进程
 if ($workermanConfig['business']['enable']) {
     $business = new BusinessWorker("{$workermanConfig['business']['protocol']}://{$workermanConfig['business']['host']}:{$workermanConfig['business']['port']}");
-    create_laravel_application_for_worker($business);
 
     $business->name = $workermanConfig['business']['name'];
     $business->count = $workermanConfig['business']['count'];

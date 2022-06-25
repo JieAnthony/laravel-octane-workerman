@@ -11,10 +11,14 @@ error_reporting(E_ALL);
 // used for ini_set('zend.exception_ignore_args', true);
 ini_set('zend.exception_ignore_args', 'on');
 
-$basePath = require_once $_SERVER['APP_BASE_PATH'] . '/vendor/laravel/octane/bin/bootstrap.php';
+$_SERVER['APP_BASE_PATH'] = $_SERVER['APP_BASE_PATH'] ?? getenv('PWD');
+require $_SERVER['APP_BASE_PATH']. '/vendor/laravel/octane/bin/bootstrap.php';
 
-$serverStateFilepath = $_SERVER['argv'][2] ?? storage_path('logs/octane-server-state.json');
-$serverState = json_decode(file_get_contents($serverStateFilepath), true);
+$serverStateFilepath = $_SERVER['argv'][2] ?? $_SERVER['APP_BASE_PATH'].'/storage/logs/octane-server-state.json';
+if (!is_file($serverStateFilepath)) {
+    exit(-1);
+}
+$serverState = json_decode(file_get_contents($serverStateFilepath ?? ''), true);
 
 define('MAX_REQUEST', (int) $serverState['state']['maxRequests']);
 
