@@ -26,9 +26,16 @@ class ServerProcessInspector
         return (bool) $masterProcessId;
     }
 
-    public function writeProcessId($pid)
+    public function writeProcessId()
     {
-        $this->serverStateFile->writeProcessId($pid);
+        $pid = @file_get_contents(config('workerman.http.pidFile'));
+
+        if ($pid) {
+            $this->serverStateFile->writeProcessId($pid);
+            return true;
+        }
+
+        return false;
     }
 
     public function getServer($mode, array $args = [])
@@ -74,6 +81,8 @@ class ServerProcessInspector
 
         $server->start();
 
+        $server->waitUntil([$this, 'writeProcessId']);
+
         $this->writeProcessId($server->getPid());
 
         return $server;
@@ -90,13 +99,11 @@ class ServerProcessInspector
             return;
         }
 
-        $server = $this->getServer('start');
+        $server = $this->getServer('start', ['-d']);
 
-        $server->run();
+        $server->start();
 
-        $pid = file_get_contents(config('workerman.gatewayworker.http.pid_file'));
-
-        $this->writeProcessId($pid);
+        $server->waitUntil([$this, 'writeProcessId']);
 
         return $server;
     }
