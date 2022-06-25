@@ -25,8 +25,6 @@ $workerman->transport = $httpConfig['transport'];
 
 $workermanClient = new WorkermanClient;
 
-$worker = null;
-
 /** @var Worker $worker */
 $worker = tap((new Worker(
     new ApplicationFactory($basePath), $workermanClient
@@ -34,7 +32,7 @@ $worker = tap((new Worker(
 
 Http::requestClass(ServerRequest::class);
 $workerman->onMessage = function(ConnectionInterface $connection, ServerRequest $psr7Request) use(
-    $worker,
+    &$worker,
     $workermanClient,
     $workerman,
 ) {
