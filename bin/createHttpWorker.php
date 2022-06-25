@@ -15,7 +15,6 @@ if (!$httpConfig['enable']) {
 }
 
 $workerman = new WorkermanWorker($httpConfig['listen'], $httpConfig['context'] ?? []);
-create_laravel_application_for_worker($workerman);
 
 $workerman->count = $httpConfig['count'] ?: cpu_count() * 2;
 $workerman->name = $httpConfig['name'];
