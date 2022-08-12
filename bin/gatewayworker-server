@@ -181,6 +181,7 @@ if ($httpConfig['enable']) {
         ]));
 
         $worker->handle($request, $context);
+        unset($worker);
 
         if (++$request_count >= MAX_REQUEST) {
             WorkermanWorker::stopAll();
