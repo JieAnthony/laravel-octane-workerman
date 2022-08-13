@@ -11,8 +11,8 @@ class WorkermanGatewayMakeSocketsCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $signature = 'workerman:gateway-make-sockets {name : The name of the Sockets}
-    {--path= : The location where the migration file should be created}';
+    protected $signature = 'make:sockets {name : The name of the Sockets}
+        {--path= : The location where the migration file should be created}';
 
     /**
      * The console command description.

@@ -11,7 +11,7 @@ class WorkermanGatewayMakeEventsCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $signature = 'workerman:gateway-make-events {name : The name of the Events}
+    protected $signature = 'make:events {name : The name of the Events}
         {--path= : The location where the migration file should be created}';
 
     /**
