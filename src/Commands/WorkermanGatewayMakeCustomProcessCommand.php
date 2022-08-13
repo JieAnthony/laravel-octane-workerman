@@ -11,8 +11,8 @@ class WorkermanGatewayMakeCustomProcessCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $signature = 'workerman:gateway-make-custom-process {name : The name of the Custom Process}
-    {--path= : The location where the migration file should be created}';
+    protected $signature = 'make:process {name : The name of the Custom Process}
+        {--path= : The location where the migration file should be created}';
 
     /**
      * The console command description.

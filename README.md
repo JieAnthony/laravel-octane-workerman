@@ -75,15 +75,15 @@ mode options : ( start / daemon / stop )
 ## Useage
 
 ```shell
-php artisan workerman:gateway start
-php artisan workerman:gateway daemon
-php artisan workerman:gateway reload
-php artisan workerman:gateway stop
-php artisan workerman:gateway status
+php artisan worker start
+php artisan worker daemon
+php artisan worker reload
+php artisan worker stop
+php artisan worker status -d
 
-php artisan workerman:gateway-make-sockets Sockets
-php artisan workerman:gateway-make-events Events
-php artisan workerman:gateway-make-custom-process CustomProcess
+php artisan make:sockets Sockets
+php artisan make:events Events
+php artisan make:process CustomProcess
 ```
 
 ### webman plugin useage

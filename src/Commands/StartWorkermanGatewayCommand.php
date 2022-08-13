@@ -18,11 +18,11 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
      *
      * @var string
      */
-    public $signature = 'workerman:gateway
+    public $signature = 'worker
                     {mode=start : Workerman server mode [ start | daemon | reload | stop ]}
                     {--host : The IP address the server should bind to}
                     {--port : The port the server should be available on}
-                    {--max-requests=10000 : The number of requests to process before reloading the server}
+                    {--max-requests=250 : The number of requests to process before reloading the server}
                     {--watch : Automatically reload the server when the application is modified}
                     {--d|debug : Automatically reload the server when the application is modified}';
 
