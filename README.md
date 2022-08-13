@@ -43,7 +43,7 @@ Start the laravel project through `gatewayworker` to make the development of lar
 $ composer config repositories.0 vcs https://github.com/mouyong/laravel-octane-workerman
 
 # support workerman:gateway and workerman:http command install from https://github.com/mouyong/laravel-octane-workerman
-$ composer require jie-anthony/laravel-octane-workerman:dev-gatewayworker -vvv
+$ composer require jie-anthony/laravel-octane-workerman:dev-master -vvv
 
 # just support octane:workerman command, install from https://github.com/JieAnthony/laravel-octane-workerman
 $ composer require jie-anthony/laravel-octane-workerman -vvv
