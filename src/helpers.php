@@ -16,7 +16,7 @@ if (!function_exists('get_variable_name')) {
 
         $var = $tmp;
         if (!$name) {
-            return lcfirst(get_variable_class_name_of_calss($var));
+            return lcfirst(get_variable_name_of_class($var));
         }
 
         unset($tmp);
@@ -26,7 +26,7 @@ if (!function_exists('get_variable_name')) {
 }
 
 if (!function_exists('get_variable_name_of_class')) {
-    function get_variable_class_name_of_calss($var)
+    function get_variable_name_of_class($var)
     {
         if (is_scalar($var)) {
             return null;
