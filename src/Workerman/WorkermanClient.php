@@ -129,7 +129,6 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
 
         $pathToFile = realpath($publicPath.'/'.$request->path());
 
-
         $response = new WorkermanHttpResponse();
         $response->withStatus(200);
         $response->withHeader('Content-Type', MimeType::get(pathinfo($request->path(), PATHINFO_EXTENSION)));
