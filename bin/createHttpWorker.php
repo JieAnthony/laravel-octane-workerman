@@ -27,7 +27,7 @@ $workermanClient = new WorkermanClient;
 
 /** @var Worker $worker */
 $worker = tap((new Worker(
-    new ApplicationFactory($basePath), $workermanClient
+    new ApplicationFactory($_SERVER['APP_BASE_PATH']), $workermanClient
 )))->boot();
 
 Http::requestClass(ServerRequest::class);
