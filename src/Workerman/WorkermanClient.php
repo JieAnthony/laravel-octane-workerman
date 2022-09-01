@@ -14,8 +14,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 use Workerman\Worker;
 use Workerman\Psr7\Response as WorkermanResponse;
+use Laravel\Octane\Contracts\ServesStaticFiles;
+use Laravel\Octane\MimeType;
+use Workerman\Protocols\Http\Response as WorkermanHttpResponse;
 
-class WorkermanClient implements Client, StoppableClient
+class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
 {
     use MarshalsPsr7RequestsAndResponses;
 
@@ -31,6 +34,108 @@ class WorkermanClient implements Client, StoppableClient
             $this->toHttpFoundationRequest($context->psr7Request),
             $context,
         ];
+    }
+    
+    /**
+     * Determine if the request can be served as a static file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Laravel\Octane\RequestContext  $context
+     * @return bool
+     */
+    public function canServeRequestAsStaticFile(Request $request, RequestContext $context): bool
+    {
+        if (! ($context->publicPath ?? false) ||
+            $request->path() === '/') {
+            return false;
+        }
+
+        $publicPath = $context->publicPath;
+
+        $pathToFile = realpath($publicPath.'/'.$request->path());
+
+        if ($this->isValidFileWithinSymlink($request, $publicPath, $pathToFile)) {
+            $pathToFile = $publicPath.'/'.$request->path();
+        }
+
+        return $this->fileIsServable(
+            $publicPath,
+            $pathToFile,
+        );
+    }
+
+    /**
+     * Determine if the request is for a valid static file within a symlink.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $publicPath
+     * @param  string  $pathToFile
+     * @return bool
+     */
+    private function isValidFileWithinSymlink(Request $request, string $publicPath, string $pathToFile): bool
+    {
+        $pathAfterSymlink = $this->pathAfterSymlink($publicPath, $request->path());
+
+        return $pathAfterSymlink && str_ends_with($pathToFile, $pathAfterSymlink);
+    }
+
+    /**
+     * If the given public file is within a symlinked directory, return the path after the symlink.
+     *
+     * @param  string  $publicPath
+     * @param  string  $path
+     * @return string|bool
+     */
+    private function pathAfterSymlink(string $publicPath, string $path)
+    {
+        $directories = explode('/', $path);
+
+        while ($directory = array_shift($directories)) {
+            $publicPath .= '/'.$directory;
+
+            if (is_link($publicPath)) {
+                return implode('/', $directories);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if the given file is servable.
+     *
+     * @param  string  $publicPath
+     * @param  string  $pathToFile
+     * @return bool
+     */
+    protected function fileIsServable(string $publicPath, string $pathToFile): bool
+    {
+        return $pathToFile &&
+                ! in_array(pathinfo($pathToFile, PATHINFO_EXTENSION), ['php', 'htaccess', 'config']) &&
+                str_starts_with($pathToFile, $publicPath) &&
+                is_file($pathToFile);
+    }
+
+    /**
+     * Serve the static file that was requested.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Laravel\Octane\RequestContext  $context
+     * @return void
+     */
+    public function serveStaticFile(Request $request, RequestContext $context): void
+    {
+        $publicPath = $context->publicPath;
+
+        $pathToFile = realpath($publicPath.'/'.$request->path());
+
+
+        $response = new WorkermanHttpResponse();
+        $response->withStatus(200);
+        $response->withHeader('Content-Type', MimeType::get(pathinfo($request->path(), PATHINFO_EXTENSION)));
+        $response->withFile($pathToFile);
+
+        $context->connection->send($response);
     }
 
     /**
