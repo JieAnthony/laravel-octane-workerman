@@ -110,6 +110,16 @@ location /ws {
     proxy_set_header Connection 'Upgrade';
 }
 ```
+test connection to websocket
+
+```
+var ws = new WebSocket('ws://121.40.165.18:8800')
+ws.onmessage = function (data) {
+    console.log("server response ws data: " + data)
+}
+
+ws.send('send message test from client')
+```
 
 
 ### Thanks
