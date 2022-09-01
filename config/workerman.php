@@ -117,9 +117,10 @@ return [
             // 'transport' => 'tcp', // Transport layer protocol. default tcp
             // 'protocol' => null, // Application layer protocol.
 
-            // process business by handle, worker_bind life cycle: https://github.com/mouyong/laravel-octane-workerman/blob/master/src/helpers.php#L243-L252
+            // process business by handler, worker_bind life cycle: https://github.com/mouyong/laravel-octane-workerman/blob/master/src/helpers.php#L243-L252
             'handler' => App\Events::class,
         ],
+
         'monitor' => [
             'enable' => env('APP_ENV') === 'local' && env('APP_DEBUG') === true,
             'handler' => JieAnthony\LaravelOctaneWorkerman\Process\Monitor::class,
