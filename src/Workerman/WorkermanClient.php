@@ -10,7 +10,6 @@ use Laravel\Octane\MarshalsPsr7RequestsAndResponses;
 use Laravel\Octane\Octane;
 use Laravel\Octane\OctaneResponse;
 use Laravel\Octane\RequestContext;
-use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 use Workerman\Worker;
 use Workerman\Psr7\Response as WorkermanResponse;
