@@ -8,14 +8,14 @@ use Workerman\Connection\TcpConnection;
 
 class {{ class }}
 {
-    public function onWorkerStart(TcpConnection $connection)
+    public function onWorkerStart(Worker $worker)
     {
-        var_dump('worker start' . $connection->id);
+        var_dump("worker {$worker->id} start");
     }
 
-    public function onWorkerStop(TcpConnection $connection)
+    public function onWorkerStop(Worker $worker)
     {
-        var_dump('worker start' . $connection->id);
+        var_dump("worker {$worker->id} stop");
     }
 
     public function onConnect(TcpConnection $connection)
