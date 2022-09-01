@@ -17,6 +17,7 @@ return [
         'pidFile' => storage_path('logs/laravel-workerman.pid'),
         'stdoutFile' => storage_path('logs/stdout.log'),
         'logFile' => storage_path('logs/workerman.log'),
+        'publicPath' => public_path(),
         'maxPackageSize' => 10 * 1024 * 1024,
     ],
     'register' => [
