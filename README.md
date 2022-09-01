@@ -113,7 +113,7 @@ location /ws {
 test connection to websocket
 
 ```
-var ws = new WebSocket('ws://121.40.165.18:8800')
+var ws = new WebSocket('ws://127.0.0.1:7000/ws')
 ws.onmessage = function (data) {
     console.log("server response ws data: " + data)
 }
