@@ -8,8 +8,12 @@ use Workerman\Connection\TcpConnection;
 
 class {{ class }}
 {
+    protected $worker;
+    
     public function onWorkerStart(Worker $worker)
     {
+        $this->worker = $worker;
+
         var_dump("worker {$worker->id} start");
     }
 
@@ -20,12 +24,14 @@ class {{ class }}
 
     public function onConnect(TcpConnection $connection)
     {
-        var_dump('client connect to connection_id ' . $connection->id);
+        $this->connection = $connection;
+
+        var_dump("client connect to worker_id {$this->worker->id} successful, current connection_id is {$connection->id}");
     }
 
     public function onMessage(TcpConnection $connection, $data)
     {
-        var_dump($message = "connection id {$connection->id} receive message from client: " . $data);
+        var_dump($message = "the worker_id {$this->worker->id} of connection_id {$connection->id} receive message from client: " . $data);
 
         $connection->send($message);
     }
@@ -33,5 +39,7 @@ class {{ class }}
     public function onClose(TcpConnection $connection)
     {
         $connection->close();
+
+        var_dump("the worker_id {$this->worker->id} of connection_id {$connection->id} closed");
     }
 }
