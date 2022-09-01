@@ -4,22 +4,33 @@ namespace {{ namespace }};
 
 use Workerman\Timer;
 use Workerman\Worker;
+use Workerman\Connection\TcpConnection;
 
 class {{ class }}
 {
-    public function onWorkerStart($connection)
+    public function onWorkerStart(TcpConnection $connection)
     {
+        var_dump('worker start' . $connection->id);
     }
 
-    public function onWorkerStop($connection)
+    public function onWorkerStop(TcpConnection $connection)
     {
-    }
-    
-    public function onConnect($connection)
-    {
+        var_dump('worker start' . $connection->id);
     }
 
-    public function onClose($connection)
+    public function onConnect(TcpConnection $connection)
+    {
+        var_dump('client connect to connection_id ' . $connection->id);
+    }
+
+    public function onMessage(TcpConnection $connection, $data)
+    {
+        var_dump($message = "connection id {$connection->id} receive message from client: " . $data);
+
+        $connection->send($message);
+    }
+
+    public function onClose(TcpConnection $connection)
     {
         $connection->close();
     }
