@@ -35,6 +35,7 @@ $workerman->onMessage = function(ConnectionInterface $connection, ServerRequest 
     &$worker,
     $workermanClient,
     $workerman,
+    $httpConfig
 ) {
     try {
         // bind webman request and response
@@ -53,6 +54,7 @@ $workerman->onMessage = function(ConnectionInterface $connection, ServerRequest 
     [$request, $context] = $workermanClient->marshalRequest(new RequestContext([
         'psr7Request' => $psr7Request,
         'connection' => $connection,
+        'publicPath' => $httpConfig['publicPath'],
     ]));
 
     $worker->handle($request, $context);
