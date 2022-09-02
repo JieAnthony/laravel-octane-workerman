@@ -105,7 +105,7 @@ return [
             'handler' => JieAnthony\LaravelOctaneWorkerman\Process\HttpWorkerProcess::class,
         ],
 
-        env('APP_NAME', 'laravel-workerman') . ' SlowHttpWorker' => [
+        'slow_http' => [
             'enable' => false,
             'listen' => 'http://0.0.0.0:7051',
             'count' => cpu_count() * 3,
