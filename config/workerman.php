@@ -92,7 +92,7 @@ return [
 
         'http' => [
             'enable' => true,
-            'listen' => 'http://0.0.0.0:7052',
+            'listen' => 'http://0.0.0.0:7050',
             'count' => cpu_count() * 3,
             // 'user' => null,
             // 'group' => null,
@@ -106,7 +106,7 @@ return [
         ],
 
         'slow_http' => [
-            'enable' => false,
+            'enable' => true,
             'listen' => 'http://0.0.0.0:7051',
             'count' => cpu_count() * 3,
             // 'user' => null,
