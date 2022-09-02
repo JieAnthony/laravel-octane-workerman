@@ -13,6 +13,7 @@ use Laravel\Octane\Worker as OctaneWorker;
 use Psr\Http\Message\ServerRequestInterface;
 use Workerman\Connection\ConnectionInterface;
 use JieAnthony\LaravelOctaneWorkerman\Workerman\WorkermanClient;
+use Workerman\Protocols\Http\Request;
 
 class HttpWorkerProcess
 {
@@ -44,7 +45,7 @@ class HttpWorkerProcess
         // var_dump("client connect to worker_id {$this->workerman->id} successful, current connection_id is {$connection->id}");
     }
 
-    public function onMessage(ConnectionInterface $connection, ServerRequest $psr7Request)
+    public function onMessage(ConnectionInterface $connection, $request)
     {
         $worker = $this->worker;
         $workerman = $this->workerman;
@@ -52,7 +53,7 @@ class HttpWorkerProcess
 
         try {
             // bind webman request and response
-            request_bind_connection($workerman, $worker, $connection, $psr7Request);
+            request_bind_connection($workerman, $worker, $connection, $request);
             response_bind_connection($workerman, $worker, $connection);
         } catch (\Throwable $e) {
             $connection->send($e->getMessage());
@@ -60,12 +61,8 @@ class HttpWorkerProcess
             exit(1);
         }
 
-        if (!$psr7Request instanceof ServerRequestInterface) {
-            return;
-        }
-
         [$request, $context] = $workermanClient->marshalRequest(new RequestContext([
-            'psr7Request' => $psr7Request,
+            'request' => $request,
             'connection' => $connection,
             'publicPath' => $this->httpConfig['publicPath'],
         ]));
