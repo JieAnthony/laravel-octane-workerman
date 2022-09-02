@@ -40,11 +40,15 @@ class StartWorkermanGatewayCommand extends Command implements SignalableCommandI
         }
 
         if (!$this->option('host')) {
-            $this->input->setOption('host', config('octane.workerman.http.host'));
+            $host = parse_url(config('octane.workerman.process.http.listen'), PHP_URL_HOST);
+            
+            $this->input->setOption('host', $host);
         }
 
         if (!$this->option('port')) {
-            $this->input->setOption('port', config('octane.workerman.http.port'));
+            $port = parse_url(config('octane.workerman.process.http.listen'), PHP_URL_PORT);
+
+            $this->input->setOption('port', $port);
         }
 
         if (in_array($this->argument('mode'), ['start', 'daemon'])) {
