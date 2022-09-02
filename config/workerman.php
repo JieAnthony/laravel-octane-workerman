@@ -3,6 +3,7 @@
 return [
     'memory_limit' => '512M',
 
+    // all: https://github.com/walkor/workerman/tree/master/src/Events
     // swoole: \Workerman\Events\Swoole:class
     'eventLoopClass' => null,
 
