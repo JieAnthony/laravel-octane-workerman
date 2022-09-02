@@ -56,7 +56,6 @@ WorkermanWorker::$daemonize = $serverState['state']['daemon'];
 TcpConnection::$defaultMaxPackageSize = $httpConfig['maxPackageSize'];
 
 require_once __DIR__."/createGatewayWorker.php";
-require_once __DIR__."/createHttpWorker.php";
 
 // Windows does not support custom processes.
 if (\DIRECTORY_SEPARATOR === '/') {
