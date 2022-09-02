@@ -3,6 +3,7 @@
 return [
     'memory_limit' => '512M',
 
+    // swoole: \Workerman\Events\Swoole:class
     'eventLoopClass' => null,
 
     'http' => [
