@@ -3,7 +3,10 @@
 return [
     'memory_limit' => '512M',
 
+    'eventLoopClass' => null,
+
     'http' => [
+        'enable' => false,
         'pidFile' => storage_path('logs/laravel-workerman.pid'),
         'stdoutFile' => storage_path('logs/stdout.log'),
         'logFile' => storage_path('logs/workerman.log'),
@@ -128,7 +131,7 @@ return [
          * 
          * 接收消息使用 Events 类进行接收。生成 Events 类: php artisan make:process Events
          */
-        env('APP_NAME', 'laravel-workerman') . ' WebsocketWorker' => [
+        'websocket' => [
             'enable' => false,
             'listen' => 'websocket://0.0.0.0:3000',
             'count' => cpu_count(),
