@@ -77,4 +77,10 @@ if (\DIRECTORY_SEPARATOR === '/') {
     }
 }
 
+if (!empty($workermanConfig['eventLoopClass'])) {
+    if(class_exists($workermanConfig['eventLoopClass'])) {
+        WorkermanWorker::$eventLoopClass = $workermanConfig['eventLoopClass'];
+    }
+}
+
 WorkermanWorker::runAll();

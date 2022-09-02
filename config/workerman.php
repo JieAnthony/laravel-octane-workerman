@@ -3,7 +3,10 @@
 return [
     'memory_limit' => '512M',
 
+    'eventLoopClass' => null,
+
     'http' => [
+        'enable' => false,
         'pidFile' => storage_path('logs/laravel-workerman.pid'),
         'stdoutFile' => storage_path('logs/stdout.log'),
         'logFile' => storage_path('logs/workerman.log'),
@@ -128,9 +131,9 @@ return [
          * 
          * 接收消息使用 Events 类进行接收。生成 Events 类: php artisan make:process Events
          */
-        env('APP_NAME', 'laravel-workerman') . ' WebsocketWorker' => [
+        'websocket' => [
             'enable' => false,
-            'listen' => 'websocket://0.0.0.0:3000',
+            'listen' => 'websocket://0.0.0.0:7060',
             'count' => cpu_count(),
             // 'user' => null,
             // 'group' => null,
@@ -140,7 +143,22 @@ return [
             // 'protocol' => null, // Application layer protocol.
 
             // process business by handler, worker_bind life cycle: https://github.com/mouyong/laravel-octane-workerman/blob/master/src/helpers.php#L243-L252
-            'handler' => App\Events::class,
+            // 'handler' => App\Events::class,
+        ],
+
+        'tcp' => [
+            'enable' => false,
+            'listen' => 'tcp://0.0.0.0:7070',
+            'count' => cpu_count(),
+            // 'user' => null,
+            // 'group' => null,
+            'reloadable' => true,
+            'reusePort' => true,
+            // 'transport' => 'tcp', // Transport layer protocol. default tcp
+            // 'protocol' => null, // Application layer protocol.
+
+            // process business by handler, worker_bind life cycle: https://github.com/mouyong/laravel-octane-workerman/blob/master/src/helpers.php#L243-L252
+            // 'handler' => App\Events::class,
         ],
 
         'monitor' => [
