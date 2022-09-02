@@ -4,7 +4,6 @@ return [
     'memory_limit' => '512M',
 
     'http' => [
-        'enable' => false,
         'pidFile' => storage_path('logs/laravel-workerman.pid'),
         'stdoutFile' => storage_path('logs/stdout.log'),
         'logFile' => storage_path('logs/workerman.log'),
