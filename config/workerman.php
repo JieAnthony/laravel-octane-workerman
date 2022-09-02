@@ -4,22 +4,14 @@ return [
     'memory_limit' => '512M',
 
     'http' => [
-        'enable' => true,
-        'host' => '0.0.0.0',
-        'port' => 7050,
-        'transport' => 'tcp',
-        'context' => [],
-        'name' => env('APP_NAME', 'laravel-workerman') . ' HttpWorker',
-        'count' => cpu_count() * 3,
-        'user' => '',
-        'group' => '',
-        'reusePort' => true,
+        'enable' => false,
         'pidFile' => storage_path('logs/laravel-workerman.pid'),
         'stdoutFile' => storage_path('logs/stdout.log'),
         'logFile' => storage_path('logs/workerman.log'),
         'publicPath' => public_path(),
         'maxPackageSize' => 10 * 1024 * 1024,
     ],
+
     'register' => [
         'enable' => false,
         'name' => env('APP_NAME', 'laravel-workerman') . ' RegisterWorker',
@@ -96,6 +88,36 @@ return [
             'handler' => JieAnthony\LaravelOctaneWorkerman\Process\DdosProxyHttp::class,
             'listen' => 'tcp://0.0.0.0:7000',
             'context' => null,
+        ],
+
+        'http' => [
+            'enable' => true,
+            'listen' => 'http://0.0.0.0:7052',
+            'count' => cpu_count() * 3,
+            // 'user' => null,
+            // 'group' => null,
+            'reloadable' => true,
+            'reusePort' => true,
+            // 'transport' => 'tcp', // Transport layer protocol. default tcp
+            // 'protocol' => null, // Application layer protocol.
+
+            // process business by handler, worker_bind life cycle: https://github.com/mouyong/laravel-octane-workerman/blob/master/src/helpers.php#L243-L252
+            'handler' => JieAnthony\LaravelOctaneWorkerman\Process\HttpWorkerProcess::class,
+        ],
+
+        env('APP_NAME', 'laravel-workerman') . ' SlowHttpWorker' => [
+            'enable' => false,
+            'listen' => 'http://0.0.0.0:7051',
+            'count' => cpu_count() * 3,
+            // 'user' => null,
+            // 'group' => null,
+            'reloadable' => true,
+            'reusePort' => true,
+            // 'transport' => 'tcp', // Transport layer protocol. default tcp
+            // 'protocol' => null, // Application layer protocol.
+
+            // process business by handler, worker_bind life cycle: https://github.com/mouyong/laravel-octane-workerman/blob/master/src/helpers.php#L243-L252
+            'handler' => JieAnthony\LaravelOctaneWorkerman\Process\HttpWorkerProcess::class,
         ],
 
         /**
