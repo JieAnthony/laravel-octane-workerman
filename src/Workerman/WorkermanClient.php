@@ -16,6 +16,8 @@ use Workerman\Psr7\Response as WorkermanResponse;
 use Laravel\Octane\Contracts\ServesStaticFiles;
 use Laravel\Octane\MimeType;
 use Workerman\Protocols\Http\Response as WorkermanHttpResponse;
+use Psr\Http\Message\ServerRequestInterface;
+use JieAnthony\LaravelOctaneWorkerman\Workerman\Actions\ConvertWorkermanRequestToIlluminateRequest;
 
 class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
 {
@@ -29,8 +31,17 @@ class WorkermanClient implements Client, StoppableClient, ServesStaticFiles
      */
     public function marshalRequest(RequestContext $context): array
     {
+        if ($context->request instanceof ServerRequestInterface) {
+            $httpFoundationRequest = $this->toHttpFoundationRequest($context->request);
+        } else {
+            $httpFoundationRequest = (new ConvertWorkermanRequestToIlluminateRequest)(
+                $context->request,
+                PHP_SAPI
+            );
+        }
+
         return [
-            $this->toHttpFoundationRequest($context->psr7Request),
+            $httpFoundationRequest,
             $context,
         ];
     }
